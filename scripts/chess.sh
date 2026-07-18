@@ -10,12 +10,14 @@ usage() {
     echo "Usage: $0 <command>"
     echo ""
     echo "Commands:"
-    echo "  play      Build JVM dist if needed, then run"
+    echo "  play      Build + run (JVM)"
     echo "  build     Build JVM distribution"
     echo "  test      Run all tests"
+    echo "  format    Auto-format Java code + markdown"
+    echo "  upgrade   Show available dependency upgrades"
     echo "  native    Build native image (GraalVM)"
     echo "  nrun      Build native if needed, then run"
-    echo "  ci        Run tests then build native image"
+    echo "  ci        Test + native build"
     exit 1
 }
 
@@ -35,6 +37,17 @@ cmd_test() {
     echo "=== Running tests ==="
     ./gradlew test
     echo "=== All tests passed ==="
+}
+
+cmd_format() {
+    echo "=== Formatting code ==="
+    ./gradlew spotlessApply
+    echo "=== Done ==="
+}
+
+cmd_upgrade() {
+    echo "=== Checking for dependency upgrades ==="
+    ./gradlew dependencyUpdates
 }
 
 cmd_native() {
@@ -63,6 +76,8 @@ case "${1:-}" in
     play)    cmd_play ;;
     build)   cmd_build ;;
     test)    cmd_test ;;
+    format)  cmd_format ;;
+    upgrade) cmd_upgrade ;;
     native)  cmd_native ;;
     nrun)    cmd_nrun ;;
     ci)      cmd_ci ;;

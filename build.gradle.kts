@@ -2,6 +2,8 @@ plugins {
     java
     application
     pmd
+    id("com.github.ben-manes.versions") version "0.51.0"
+    id("com.diffplug.spotless") version "7.0.2"
     id("org.graalvm.buildtools.native") version "0.10.3"
 }
 
@@ -43,6 +45,19 @@ pmd {
     isConsoleOutput = true
     ruleSets = listOf()
     ruleSetFiles = files("config/pmd/rules.xml")
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        target("src/**/*.java")
+        targetExclude("src/test/**/*.txt")
+    }
+    format("misc") {
+        target("*.md", "scripts/**/*.sh")
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
 
 graalvmNative {

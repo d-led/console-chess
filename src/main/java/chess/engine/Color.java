@@ -1,9 +1,10 @@
 package chess.engine;
 
 public enum Color {
-    OUTLINE, FILLED;
+  OUTLINE,
+  FILLED;
 
-    public Color opposite() {
-        return this == OUTLINE ? FILLED : OUTLINE;
-    }
+  public Color opposite() {
+    return this == OUTLINE ? FILLED : OUTLINE;
+  }
 }
