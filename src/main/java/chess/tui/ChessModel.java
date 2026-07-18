@@ -17,7 +17,9 @@ public class ChessModel implements Model {
     private static final Style SEL = Style.newStyle()
         .background(Color.color("100")).foreground(Color.color("255"));
     private static final Style LEGAL = Style.newStyle()
-        .background(Color.color("58")).foreground(Color.color("255"));
+        .background(Color.color("178")).foreground(Color.color("0"));
+    private static final Style CURSOR = Style.newStyle()
+        .background(Color.color("33")).foreground(Color.color("255"));
     private static final Style TITLE = Style.newStyle()
         .foreground(Color.color("226")).bold(true);
     private static final Style ALERT = Style.newStyle()
@@ -70,6 +72,7 @@ public class ChessModel implements Model {
                     yield UpdateResult.from(this);
                 }
                 case "enter", " " -> handleSelect();
+                case "esc", "escape" -> deselect();
                 default -> UpdateResult.from(this);
             };
         }
@@ -123,6 +126,15 @@ public class ChessModel implements Model {
         selectedSquare = null;
         legalDests = List.of();
         message = "Invalid move. " + turnMessage();
+        return UpdateResult.from(this);
+    }
+
+    private UpdateResult<? extends Model> deselect() {
+        if (selectedSquare != null) {
+            selectedSquare = null;
+            legalDests = List.of();
+            message = turnMessage();
+        }
         return UpdateResult.from(this);
     }
 
@@ -182,10 +194,8 @@ public class ChessModel implements Model {
                     cellStyle = LEGAL;
                     left = "▸"; right = "◂";
                 } else if (isCursor && !hasSelection) {
-                    // Free cursor — border marker so it's visible on any background
-                    cellStyle = isLight ? LIGHT_SQ : DARK_SQ;
-                    left = "»";
-                    right = "«";
+                    // Free cursor — blue background, visible everywhere
+                    cellStyle = CURSOR;
                 } else if (isLegalDest) {
                     cellStyle = LEGAL;
                 }

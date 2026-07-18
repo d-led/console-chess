@@ -25,9 +25,8 @@ cmd_build() {
 }
 
 cmd_play() {
-    if [[ ! -x "$JVM_BIN" ]]; then
-        cmd_build
-    fi
+    echo "=== Building ==="
+    ./gradlew installDist
     echo "=== Launching chess ==="
     exec "$JVM_BIN"
 }
