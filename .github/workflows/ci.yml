@@ -27,3 +27,37 @@ jobs:
           name: JUnit Tests
           path: build/test-results/test/TEST-*.xml
           reporter: java-junit
+
+  native:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: chess-linux
+            binary: build/native/nativeCompile/chess
+          - os: macos-latest
+            artifact: chess-macos-arm64
+            binary: build/native/nativeCompile/chess
+          - os: windows-latest
+            artifact: chess-windows
+            binary: build/native/nativeCompile/chess.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - run: ./gradlew nativeCompile
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.binary }}

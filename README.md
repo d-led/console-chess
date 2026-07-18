@@ -10,13 +10,25 @@ TUI chess in Java — play against an ELO ~1000 AI in your terminal.
 
 This builds the JVM distribution if needed, then launches the game.
 
+## Downloads
+
+Pre-built native binaries from the latest `main` build:
+
+| Platform    | Download                                                                                              |
+| ----------- | ----------------------------------------------------------------------------------------------------- |
+| Linux x64   | [chess-linux](https://nightly.link/d-led/console-chess/workflows/ci/main/chess-linux.zip)             |
+| macOS arm64 | [chess-macos-arm64](https://nightly.link/d-led/console-chess/workflows/ci/main/chess-macos-arm64.zip) |
+| Windows x64 | [chess-windows.exe](https://nightly.link/d-led/console-chess/workflows/ci/main/chess-windows.zip)     |
+
+Unzip, make executable (`chmod +x chess-linux`), then run `./chess-linux`.
+
 ## Controls
 
-| Key | Action |
-|-----|--------|
-| Arrows / `hjkl` | Move cursor |
-| Enter / Space | Select piece, confirm move |
-| `q` | Quit |
+| Key             | Action                     |
+| --------------- | -------------------------- |
+| Arrows / `hjkl` | Move cursor                |
+| Enter / Space   | Select piece, confirm move |
+| `q`             | Quit                       |
 
 ## Engines
 
@@ -31,11 +43,11 @@ chess -e greedy               # ELO ~500, captures everything
 chess -e noise -d medium -s 42  # reproducible with seed
 ```
 
-| Engine | ELO | Description |
-|--------|-----|-------------|
+| Engine            | ELO      | Description                                       |
+| ----------------- | -------- | ------------------------------------------------- |
 | `noise` (default) | 750–1250 | Material + center + mobility + configurable noise |
-| `adam` | ~1600 | Minimax search + piece-square positional tables |
-| `greedy` | ~500 | Always captures highest-value piece |
+| `adam`            | ~1600    | Minimax search + piece-square positional tables   |
+| `greedy`          | ~500     | Always captures highest-value piece               |
 
 ## Scripts
 
