@@ -3,12 +3,12 @@ package chess.engine;
 public record Piece(Color color, PieceType type) {
     public String symbol() {
         return switch (type) {
-            case KING -> color == Color.WHITE ? "♔" : "♚";
-            case QUEEN -> color == Color.WHITE ? "♕" : "♛";
-            case ROOK -> color == Color.WHITE ? "♖" : "♜";
-            case BISHOP -> color == Color.WHITE ? "♗" : "♝";
-            case KNIGHT -> color == Color.WHITE ? "♘" : "♞";
-            case PAWN -> color == Color.WHITE ? "♙" : "♟";
+            case KING -> color == Color.OUTLINE ? "♔" : "♚";
+            case QUEEN -> color == Color.OUTLINE ? "♕" : "♛";
+            case ROOK -> color == Color.OUTLINE ? "♖" : "♜";
+            case BISHOP -> color == Color.OUTLINE ? "♗" : "♝";
+            case KNIGHT -> color == Color.OUTLINE ? "♘" : "♞";
+            case PAWN -> color == Color.OUTLINE ? "♙" : "♟";
         };
     }
 

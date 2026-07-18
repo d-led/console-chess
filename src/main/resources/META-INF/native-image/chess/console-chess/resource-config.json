@@ -1,0 +1,15 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "META-INF/services/.*"
+      },
+      {
+        "pattern": "org/jline/.*"
+      },
+      {
+        "pattern": "com/sun/jna/.*"
+      }
+    ]
+  }
+}

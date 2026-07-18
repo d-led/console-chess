@@ -54,9 +54,9 @@ public class MoveGenerator {
 
     private List<Move> generatePawnMoves(Board board, Square from, Color color) {
         List<Move> moves = new ArrayList<>();
-        int direction = color == Color.WHITE ? 1 : -1;
-        int startRank = color == Color.WHITE ? 1 : 6;
-        int promoRank = color == Color.WHITE ? 7 : 0;
+        int direction = color == Color.OUTLINE ? 1 : -1;
+        int startRank = color == Color.OUTLINE ? 1 : 6;
+        int promoRank = color == Color.OUTLINE ? 7 : 0;
 
         // Single push
         Square oneAhead = from.offset(0, direction);

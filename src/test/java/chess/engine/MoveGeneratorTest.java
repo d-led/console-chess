@@ -11,33 +11,33 @@ class MoveGeneratorTest {
 
     @Test
     void initialWhiteHasTwentyMoves() {
-        List<Move> moves = generator.generateLegalMoves(board, Color.WHITE);
+        List<Move> moves = generator.generateLegalMoves(board, Color.OUTLINE);
         assertThat(moves).hasSize(20);
     }
 
     @Test
     void initialBlackHasTwentyMoves() {
-        List<Move> moves = generator.generateLegalMoves(board, Color.BLACK);
+        List<Move> moves = generator.generateLegalMoves(board, Color.FILLED);
         assertThat(moves).hasSize(20);
     }
 
     @Test
     void pawnSinglePush() {
-        List<Move> moves = generator.generateLegalMoves(board, Color.WHITE);
+        List<Move> moves = generator.generateLegalMoves(board, Color.OUTLINE);
         assertThat(moves).extracting(Move::toString)
             .contains("e2e3", "d2d3");
     }
 
     @Test
     void pawnDoublePushFromStart() {
-        List<Move> moves = generator.generateLegalMoves(board, Color.WHITE);
+        List<Move> moves = generator.generateLegalMoves(board, Color.OUTLINE);
         assertThat(moves).extracting(Move::toString)
             .contains("e2e4", "d2d4");
     }
 
     @Test
     void knightHasCorrectMovesFromStart() {
-        List<Move> moves = generator.generateLegalMoves(board, Color.WHITE);
+        List<Move> moves = generator.generateLegalMoves(board, Color.OUTLINE);
         // b1 knight can go to a3 and c3
         assertThat(moves).extracting(Move::toString)
             .contains("b1a3", "b1c3");
@@ -49,14 +49,14 @@ class MoveGeneratorTest {
     @Test
     void noMovesThroughOwnPieces() {
         // Rook on a1 should have no moves (blocked by own pieces)
-        List<Move> moves = generator.generateLegalMoves(board, Color.WHITE);
+        List<Move> moves = generator.generateLegalMoves(board, Color.OUTLINE);
         assertThat(moves).extracting(Move::toString)
             .doesNotContain("a1a3", "a1a4");
     }
 
     @Test
     void kingHasNoMovesInitially() {
-        List<Move> moves = generator.generateLegalMoves(board, Color.WHITE);
+        List<Move> moves = generator.generateLegalMoves(board, Color.OUTLINE);
         assertThat(moves).extracting(Move::toString)
             .doesNotContain("e1e2", "e1d1", "e1f1");
     }
@@ -73,7 +73,7 @@ class MoveGeneratorTest {
         // bishop would be legal but let's verify blocked king
         custom.makeMove(new Move(Square.from("e2"), Square.from("e4")));
         // Now white's queen and bishop have paths
-        List<Move> moves = generator.generateLegalMoves(custom, Color.WHITE);
+        List<Move> moves = generator.generateLegalMoves(custom, Color.OUTLINE);
         assertThat(moves).extracting(Move::toString).contains("f1b5", "f1c4", "f1d3", "f1e2");
     }
 
@@ -82,9 +82,9 @@ class MoveGeneratorTest {
         // Setup: white knight can capture black pawn
         Board custom = new Board();
         custom.removePiece(Square.from("b1"));
-        custom.setPiece(Square.from("d5"), new Piece(Color.WHITE, PieceType.KNIGHT));
+        custom.setPiece(Square.from("d5"), new Piece(Color.OUTLINE, PieceType.KNIGHT));
 
-        List<Move> moves = generator.generateLegalMoves(custom, Color.WHITE);
+        List<Move> moves = generator.generateLegalMoves(custom, Color.OUTLINE);
         assertThat(moves).extracting(Move::toString).contains("d5c7", "d5e7");
     }
 
@@ -98,9 +98,9 @@ class MoveGeneratorTest {
         board.removePiece(Square.from("d2"));
         board.removePiece(Square.from("e2"));
         // Place black queen on a5 - it should check e1 diagonally
-        board.setPiece(Square.from("a5"), new Piece(Color.BLACK, PieceType.QUEEN));
+        board.setPiece(Square.from("a5"), new Piece(Color.FILLED, PieceType.QUEEN));
 
-        assertThat(generator.isKingInCheck(board, Color.WHITE)).isTrue();
+        assertThat(generator.isKingInCheck(board, Color.OUTLINE)).isTrue();
     }
 
     @Test
@@ -112,13 +112,13 @@ class MoveGeneratorTest {
             for (int f = 0; f < 8; f++)
                 stalemate.removePiece(new Square(f, r));
 
-        stalemate.setPiece(Square.from("a8"), new Piece(Color.BLACK, PieceType.KING));
-        stalemate.setPiece(Square.from("b6"), new Piece(Color.WHITE, PieceType.QUEEN));
-        stalemate.setPiece(Square.from("a1"), new Piece(Color.WHITE, PieceType.KING));
+        stalemate.setPiece(Square.from("a8"), new Piece(Color.FILLED, PieceType.KING));
+        stalemate.setPiece(Square.from("b6"), new Piece(Color.OUTLINE, PieceType.QUEEN));
+        stalemate.setPiece(Square.from("a1"), new Piece(Color.OUTLINE, PieceType.KING));
 
-        List<Move> moves = generator.generateLegalMoves(stalemate, Color.BLACK);
+        List<Move> moves = generator.generateLegalMoves(stalemate, Color.FILLED);
         assertThat(moves).isEmpty();
 
-        assertThat(generator.isKingInCheck(stalemate, Color.BLACK)).isFalse();
+        assertThat(generator.isKingInCheck(stalemate, Color.FILLED)).isFalse();
     }
 }

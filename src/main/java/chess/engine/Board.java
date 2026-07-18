@@ -84,28 +84,28 @@ public class Board {
 
     private void setupInitialPosition() {
         // Black pieces (rank 7)
-        squares[7][0] = new Piece(Color.BLACK, PieceType.ROOK);
-        squares[7][1] = new Piece(Color.BLACK, PieceType.KNIGHT);
-        squares[7][2] = new Piece(Color.BLACK, PieceType.BISHOP);
-        squares[7][3] = new Piece(Color.BLACK, PieceType.QUEEN);
-        squares[7][4] = new Piece(Color.BLACK, PieceType.KING);
-        squares[7][5] = new Piece(Color.BLACK, PieceType.BISHOP);
-        squares[7][6] = new Piece(Color.BLACK, PieceType.KNIGHT);
-        squares[7][7] = new Piece(Color.BLACK, PieceType.ROOK);
+        squares[7][0] = new Piece(Color.FILLED, PieceType.ROOK);
+        squares[7][1] = new Piece(Color.FILLED, PieceType.KNIGHT);
+        squares[7][2] = new Piece(Color.FILLED, PieceType.BISHOP);
+        squares[7][3] = new Piece(Color.FILLED, PieceType.QUEEN);
+        squares[7][4] = new Piece(Color.FILLED, PieceType.KING);
+        squares[7][5] = new Piece(Color.FILLED, PieceType.BISHOP);
+        squares[7][6] = new Piece(Color.FILLED, PieceType.KNIGHT);
+        squares[7][7] = new Piece(Color.FILLED, PieceType.ROOK);
         for (int f = 0; f < 8; f++) {
-            squares[6][f] = new Piece(Color.BLACK, PieceType.PAWN);
+            squares[6][f] = new Piece(Color.FILLED, PieceType.PAWN);
         }
         // White pieces (rank 0)
-        squares[0][0] = new Piece(Color.WHITE, PieceType.ROOK);
-        squares[0][1] = new Piece(Color.WHITE, PieceType.KNIGHT);
-        squares[0][2] = new Piece(Color.WHITE, PieceType.BISHOP);
-        squares[0][3] = new Piece(Color.WHITE, PieceType.QUEEN);
-        squares[0][4] = new Piece(Color.WHITE, PieceType.KING);
-        squares[0][5] = new Piece(Color.WHITE, PieceType.BISHOP);
-        squares[0][6] = new Piece(Color.WHITE, PieceType.KNIGHT);
-        squares[0][7] = new Piece(Color.WHITE, PieceType.ROOK);
+        squares[0][0] = new Piece(Color.OUTLINE, PieceType.ROOK);
+        squares[0][1] = new Piece(Color.OUTLINE, PieceType.KNIGHT);
+        squares[0][2] = new Piece(Color.OUTLINE, PieceType.BISHOP);
+        squares[0][3] = new Piece(Color.OUTLINE, PieceType.QUEEN);
+        squares[0][4] = new Piece(Color.OUTLINE, PieceType.KING);
+        squares[0][5] = new Piece(Color.OUTLINE, PieceType.BISHOP);
+        squares[0][6] = new Piece(Color.OUTLINE, PieceType.KNIGHT);
+        squares[0][7] = new Piece(Color.OUTLINE, PieceType.ROOK);
         for (int f = 0; f < 8; f++) {
-            squares[1][f] = new Piece(Color.WHITE, PieceType.PAWN);
+            squares[1][f] = new Piece(Color.OUTLINE, PieceType.PAWN);
         }
     }
 

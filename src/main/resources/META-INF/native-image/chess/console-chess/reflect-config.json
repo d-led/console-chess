@@ -1,0 +1,33 @@
+[
+  {
+    "name": "org.jline.terminal.impl.jna.JnaTerminalProvider",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "org.jline.terminal.impl.exec.ExecTerminalProvider",
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "com.williamcallahan.tui4j.compat.bubbletea.KeyPressMessage",
+    "allDeclaredFields": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.williamcallahan.tui4j.compat.bubbletea.QuitMessage",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.williamcallahan.tui4j.compat.bubbletea.WindowSizeMessage",
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "java.lang.management.ManagementFactory",
+    "methods": [
+      { "name": "getRuntimeMXBean", "parameterTypes": [] }
+    ]
+  }
+]

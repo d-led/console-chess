@@ -8,7 +8,7 @@ class GameStateTest {
     @Test
     void gameStartsInProgressWithWhiteToMove() {
         GameState game = new GameState();
-        assertThat(game.currentTurn()).isEqualTo(Color.WHITE);
+        assertThat(game.currentTurn()).isEqualTo(Color.OUTLINE);
         assertThat(game.status()).isEqualTo(GameState.GameStatus.IN_PROGRESS);
     }
 
@@ -17,7 +17,7 @@ class GameStateTest {
         GameState game = new GameState();
         boolean result = game.makeMove(new Move(Square.from("e2"), Square.from("e4")));
         assertThat(result).isTrue();
-        assertThat(game.currentTurn()).isEqualTo(Color.BLACK);
+        assertThat(game.currentTurn()).isEqualTo(Color.FILLED);
     }
 
     @Test
@@ -26,7 +26,7 @@ class GameStateTest {
         // Try to move black pawn when it's white's turn
         boolean result = game.makeMove(new Move(Square.from("e7"), Square.from("e5")));
         assertThat(result).isFalse();
-        assertThat(game.currentTurn()).isEqualTo(Color.WHITE); // turn unchanged
+        assertThat(game.currentTurn()).isEqualTo(Color.OUTLINE); // turn unchanged
     }
 
     @Test
@@ -36,7 +36,7 @@ class GameStateTest {
         game.board().removePiece(Square.from("e2"));
         // Remove black pawn on e7 so we can put rook there
         game.board().removePiece(Square.from("e7"));
-        game.board().setPiece(Square.from("e7"), new Piece(Color.BLACK, PieceType.ROOK));
+        game.board().setPiece(Square.from("e7"), new Piece(Color.FILLED, PieceType.ROOK));
         // Moving f2-f4 exposes king on e1 to rook on e7 via the open e-file
         boolean result = game.makeMove(new Move(Square.from("f2"), Square.from("f4")));
         assertThat(result).isFalse();

@@ -10,7 +10,7 @@ public class GameState {
 
     public GameState() {
         this.board = new Board();
-        this.currentTurn = Color.WHITE;
+        this.currentTurn = Color.OUTLINE;
         this.status = GameStatus.IN_PROGRESS;
         this.moveGenerator = new MoveGenerator();
     }
@@ -45,7 +45,7 @@ public class GameState {
         List<Move> nextMoves = moveGenerator.generateLegalMoves(board, currentTurn);
         if (nextMoves.isEmpty()) {
             if (moveGenerator.isKingInCheck(board, currentTurn)) {
-                status = currentTurn == Color.WHITE ? GameStatus.BLACK_WINS : GameStatus.WHITE_WINS;
+                status = currentTurn == Color.OUTLINE ? GameStatus.FILLED_WINS : GameStatus.OUTLINE_WINS;
             } else {
                 status = GameStatus.STALEMATE;
             }
@@ -53,6 +53,6 @@ public class GameState {
     }
 
     public enum GameStatus {
-        IN_PROGRESS, WHITE_WINS, BLACK_WINS, STALEMATE
+        IN_PROGRESS, OUTLINE_WINS, FILLED_WINS, STALEMATE
     }
 }

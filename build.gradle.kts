@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    id("org.graalvm.buildtools.native") version "0.10.3"
 }
 
 group = "chess"
@@ -17,7 +18,13 @@ repositories {
 }
 
 dependencies {
-    implementation("com.williamcallahan:tui4j:0.3.3")
+    implementation("com.williamcallahan:tui4j:0.3.3") {
+        exclude(group = "org.jline", module = "jline-terminal-jni")
+        exclude(group = "org.jline", module = "jline-native")
+    }
+    // JNA terminal backend (works on macOS, Linux, Windows without native libs)
+    implementation("org.jline:jline-terminal-jna:3.26.1")
+    implementation("net.java.dev.jna:jna:5.14.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
     testImplementation("org.assertj:assertj-core:3.26.3")
 }
@@ -30,17 +37,36 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.named<JavaExec>("run") {
-    standardInput = System.`in`
-    // TUI apps need a real TTY — gradle's JavaExec doesn't provide raw mode.
-    // Use `./gradlew installDist && build/install/console-chess/bin/console-chess` instead.
-    doFirst {
-        logger.warn("For arrow keys to work, run: ./build/install/console-chess/bin/console-chess")
+graalvmNative {
+    binaries {
+        named("main") {
+            imageName.set("chess")
+            mainClass.set("chess.ChessApp")
+            fallback.set(false)
+            verbose.set(true)
+
+            buildArgs.addAll(
+                // JLine native (Windows JNI stubs) — defer to runtime where JLine handles failure
+                "--initialize-at-run-time=org.jline.nativ",
+                // JLine utils safe for build-time init
+                "--initialize-at-build-time=org.jline.utils",
+                // JNA needs runtime initialization
+                "--initialize-at-run-time=com.sun.jna",
+                // JLine terminal providers need runtime init
+                "--initialize-at-run-time=org.jline.terminal.impl.jna",
+                "--initialize-at-run-time=org.jline.terminal.impl.exec",
+                // Report stack traces for debugging
+                "-H:+ReportExceptionStackTraces",
+                // Include all charsets
+                "-H:+AddAllCharsets",
+            )
+        }
     }
 }
 
-tasks.register<Exec>("play") {
-    dependsOn("installDist")
+// Convenience: run the native binary after building
+tasks.register<Exec>("runNative") {
+    dependsOn("nativeCompile")
     workingDir = projectDir
-    commandLine("${buildDir}/install/${rootProject.name}/bin/${rootProject.name}")
+    commandLine("${layout.buildDirectory.get()}/native/nativeCompile/chess")
 }

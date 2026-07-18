@@ -25,9 +25,9 @@ class ChessAITest {
             for (int f = 0; f < 8; f++)
                 game.board().removePiece(new Square(f, r));
 
-        game.board().setPiece(Square.from("a8"), new Piece(Color.BLACK, PieceType.KING));
-        game.board().setPiece(Square.from("b6"), new Piece(Color.WHITE, PieceType.QUEEN));
-        game.board().setPiece(Square.from("a1"), new Piece(Color.WHITE, PieceType.KING));
+        game.board().setPiece(Square.from("a8"), new Piece(Color.FILLED, PieceType.KING));
+        game.board().setPiece(Square.from("b6"), new Piece(Color.OUTLINE, PieceType.QUEEN));
+        game.board().setPiece(Square.from("a1"), new Piece(Color.OUTLINE, PieceType.KING));
 
         // Black to move, but it's white's turn in the game... this won't work directly.
         // We need a GameState where it's AI's turn AND AI has no moves.
@@ -45,9 +45,9 @@ class ChessAITest {
                 stalemateGame.board().removePiece(new Square(f, r));
 
         // White king on a1, black king on a8, white queen creating stalemate for black
-        stalemateGame.board().setPiece(Square.from("a1"), new Piece(Color.WHITE, PieceType.KING));
-        stalemateGame.board().setPiece(Square.from("h8"), new Piece(Color.BLACK, PieceType.KING));
-        stalemateGame.board().setPiece(Square.from("b6"), new Piece(Color.WHITE, PieceType.QUEEN));
+        stalemateGame.board().setPiece(Square.from("a1"), new Piece(Color.OUTLINE, PieceType.KING));
+        stalemateGame.board().setPiece(Square.from("h8"), new Piece(Color.FILLED, PieceType.KING));
+        stalemateGame.board().setPiece(Square.from("b6"), new Piece(Color.OUTLINE, PieceType.QUEEN));
 
         // Force it to be black's turn by making a white move first
         stalemateGame.makeMove(new Move(Square.from("b6"), Square.from("b7")));
@@ -61,8 +61,8 @@ class ChessAITest {
         // Set up: white knight can capture black pawn or move elsewhere
         game.board().removePiece(Square.from("b1"));
         game.board().removePiece(Square.from("c7"));
-        game.board().setPiece(Square.from("d5"), new Piece(Color.WHITE, PieceType.KNIGHT));
-        game.board().setPiece(Square.from("c7"), new Piece(Color.BLACK, PieceType.PAWN));
+        game.board().setPiece(Square.from("d5"), new Piece(Color.OUTLINE, PieceType.KNIGHT));
+        game.board().setPiece(Square.from("c7"), new Piece(Color.FILLED, PieceType.PAWN));
 
         // Give white the knight on d5, black pawn on c7. Knight can capture c7 or go elsewhere.
         // Run AI selection (it's white's turn by default)

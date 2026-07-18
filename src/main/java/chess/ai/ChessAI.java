@@ -19,7 +19,7 @@ public class ChessAI {
             }
         }
         // Material
-        score += board.materialScore(Color.BLACK) - board.materialScore(Color.WHITE);
+        score += board.materialScore(Color.FILLED) - board.materialScore(Color.OUTLINE);
 
         // Positional: center control bonus for pieces on d4,e4,d5,e5
         int[][] centerSquares = {{3,3},{4,3},{3,4},{4,4}};
