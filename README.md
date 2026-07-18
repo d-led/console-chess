@@ -2,6 +2,8 @@
 
 TUI chess in Java — play against an ELO ~1000 AI in your terminal.
 
+![console chess](./docs/img/console-chess.png)
+
 ## Quick Start
 
 ```bash
