@@ -281,7 +281,7 @@ public class ChessModel implements Model {
     if (filledMat < 39) {
       sb.append("Filled lost: ").append(39 - filledMat).append(" pts");
     }
-    return sb.length() > 3 ? sb.toString() : "";
+    return sb.toString();
   }
 
   private String turnMessage() {

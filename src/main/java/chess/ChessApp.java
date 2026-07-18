@@ -35,7 +35,7 @@ public class ChessApp {
         };
 
     System.err.println("[engine: " + eng.name() + ", seed: " + opts.seed + "]");
-    new Program(new ChessModel(eng)).run();
+    new Program(new ChessModel(eng)).withAltScreen().run();
   }
 
   private record Options(String engine, String difficulty, long seed) {}

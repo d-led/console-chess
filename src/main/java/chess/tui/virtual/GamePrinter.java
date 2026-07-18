@@ -47,10 +47,8 @@ public class GamePrinter {
   private void renderCaptured(VirtualTerminal vt, Board board) {
     int outlineMat = board.materialScore(Color.OUTLINE);
     int filledMat = board.materialScore(Color.FILLED);
-    if (outlineMat < 39 || filledMat < 39) {
-      vt.append("  Outline lost: " + (39 - outlineMat) + " pts");
-      vt.append("  Filled lost: " + (39 - filledMat) + " pts\n");
-    }
+    vt.append("  Outline lost: " + (39 - outlineMat) + " pts");
+    vt.append("  Filled lost: " + (39 - filledMat) + " pts\n");
   }
 
   public String render(GameState game) {
