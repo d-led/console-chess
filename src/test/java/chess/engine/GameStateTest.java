@@ -32,11 +32,13 @@ class GameStateTest {
     @Test
     void makingIllegalMoveThatExposesKingReturnsFalse() {
         GameState game = new GameState();
-        // Remove the e2 pawn, put a black rook on e8
+        // Remove e2 pawn, place black rook on e7 (same file as king, no blocking pieces)
         game.board().removePiece(Square.from("e2"));
-        game.board().setPiece(Square.from("e8"), new Piece(Color.BLACK, PieceType.ROOK));
-        // Now trying to move f2-f4 exposes king on e1 to rook on e8
-        boolean result = game.makeMove(new Move(Square.from("f2"), Square.from("f3")));
+        // Remove black pawn on e7 so we can put rook there
+        game.board().removePiece(Square.from("e7"));
+        game.board().setPiece(Square.from("e7"), new Piece(Color.BLACK, PieceType.ROOK));
+        // Moving f2-f4 exposes king on e1 to rook on e7 via the open e-file
+        boolean result = game.makeMove(new Move(Square.from("f2"), Square.from("f4")));
         assertThat(result).isFalse();
     }
 

@@ -20,8 +20,13 @@ public record Square(int file, int rank) {
         return "" + (char) ('a' + file) + (char) ('1' + rank);
     }
 
+    public static Square tryCreate(int file, int rank) {
+        if (file < 0 || file > 7 || rank < 0 || rank > 7) return null;
+        return new Square(file, rank);
+    }
+
     public Square offset(int df, int dr) {
-        return new Square(file + df, rank + dr);
+        return tryCreate(file + df, rank + dr);
     }
 
     public boolean isOnBoard() {

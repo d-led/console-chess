@@ -32,4 +32,15 @@ tasks.test {
 
 tasks.named<JavaExec>("run") {
     standardInput = System.`in`
+    // TUI apps need a real TTY — gradle's JavaExec doesn't provide raw mode.
+    // Use `./gradlew installDist && build/install/console-chess/bin/console-chess` instead.
+    doFirst {
+        logger.warn("For arrow keys to work, run: ./build/install/console-chess/bin/console-chess")
+    }
+}
+
+tasks.register<Exec>("play") {
+    dependsOn("installDist")
+    workingDir = projectDir
+    commandLine("${buildDir}/install/${rootProject.name}/bin/${rootProject.name}")
 }

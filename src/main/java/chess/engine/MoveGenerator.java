@@ -60,11 +60,11 @@ public class MoveGenerator {
 
         // Single push
         Square oneAhead = from.offset(0, direction);
-        if (oneAhead.isOnBoard() && board.pieceAt(oneAhead).isEmpty()) {
+        if (oneAhead != null && board.pieceAt(oneAhead).isEmpty()) {
             addPawnMoveOrPromotion(moves, from, oneAhead, promoRank);
             // Double push from start
             Square twoAhead = from.offset(0, 2 * direction);
-            if (from.rank() == startRank && twoAhead.isOnBoard() && board.pieceAt(twoAhead).isEmpty()) {
+            if (from.rank() == startRank && twoAhead != null && board.pieceAt(twoAhead).isEmpty()) {
                 moves.add(new Move(from, twoAhead));
             }
         }
@@ -72,7 +72,7 @@ public class MoveGenerator {
         // Captures
         for (int df : new int[]{-1, 1}) {
             Square capture = from.offset(df, direction);
-            if (capture.isOnBoard()) {
+            if (capture != null) {
                 board.pieceAt(capture).ifPresent(target -> {
                     if (target.color() != color) {
                         addPawnMoveOrPromotion(moves, from, capture, promoRank);
@@ -100,7 +100,7 @@ public class MoveGenerator {
                            {1, 2}, {1, -2}, {-1, 2}, {-1, -2}};
         for (int[] offset : offsets) {
             Square to = from.offset(offset[0], offset[1]);
-            if (to.isOnBoard()) {
+            if (to != null) {
                 Optional<Piece> target = board.pieceAt(to);
                 if (target.isEmpty() || target.get().color() != color) {
                     moves.add(new Move(from, to));
@@ -115,7 +115,7 @@ public class MoveGenerator {
         for (int[] dir : directions) {
             for (int i = 1; i < 8; i++) {
                 Square to = from.offset(dir[0] * i, dir[1] * i);
-                if (!to.isOnBoard()) break;
+                if (to == null) break;
                 Optional<Piece> target = board.pieceAt(to);
                 if (target.isEmpty()) {
                     moves.add(new Move(from, to));
@@ -136,7 +136,7 @@ public class MoveGenerator {
             for (int dr = -1; dr <= 1; dr++) {
                 if (df == 0 && dr == 0) continue;
                 Square to = from.offset(df, dr);
-                if (to.isOnBoard()) {
+                if (to != null) {
                     Optional<Piece> target = board.pieceAt(to);
                     if (target.isEmpty() || target.get().color() != color) {
                         moves.add(new Move(from, to));

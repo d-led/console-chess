@@ -90,48 +90,17 @@ class MoveGeneratorTest {
 
     @Test
     void isKingInCheckDetectsCheck() {
-        Board custom = new Board();
-        // Remove pawns to open diagonal for bishop/queen
-        custom.removePiece(Square.from("e2"));
-        custom.removePiece(Square.from("d7"));
-        custom.setPiece(Square.from("d7"), new Piece(Color.BLACK, PieceType.QUEEN));
-        custom.setPiece(Square.from("e4"), new Piece(Color.BLACK, PieceType.QUEEN)); // checks king on e1
+        // Given a board where black queen on a5 has clear diagonal to e1
+        Board board = new Board();
+        // Remove blocking white pawns on b2,c2,d2,e2
+        board.removePiece(Square.from("b2"));
+        board.removePiece(Square.from("c2"));
+        board.removePiece(Square.from("d2"));
+        board.removePiece(Square.from("e2"));
+        // Place black queen on a5 - it should check e1 diagonally
+        board.setPiece(Square.from("a5"), new Piece(Color.BLACK, PieceType.QUEEN));
 
-        // Move the black queen to a4 (checking through... let's just use direct)
-        Board checkBoard = new Board();
-        checkBoard.removePiece(Square.from("e2"));
-        checkBoard.setPiece(Square.from("a5"), new Piece(Color.BLACK, PieceType.QUEEN));
-        // a5 checks e1 through the diagonal? a5 is on a-file, e1 is on e-file... 
-        // a5 -> c3 -> e1? Actually a5-c3-e1 is NOT diagonal. Let me set up properly.
-        
-        // Simpler: put black rook on e2
-        Board checkBoard2 = new Board();
-        checkBoard2.removePiece(Square.from("e2")); // remove white pawn
-        checkBoard2.setPiece(Square.from("e7"), new Piece(Color.BLACK, PieceType.ROOK));
-        // King is not in check yet (blocked by pawn on e7? wait, we set e7 to rook)
-        // Let's just remove the pawn barrier:
-        checkBoard2.removePiece(Square.from("d7")); 
-        checkBoard2.removePiece(Square.from("f7")); 
-        // Still blocked by e2 pawn...
-        // I'll set up a clean check: put a black rook on the same rank/file as white king with nothing between
-        Board checkBoard3 = new Board();
-        // Remove all pieces between e1 and e8
-        checkBoard3.removePiece(Square.from("e2"));
-        checkBoard3.setPiece(Square.from("e8"), new Piece(Color.BLACK, PieceType.ROOK));
-        // White king on e1, black rook on e8, nothing in between - check!
-        assertThat(generator.isKingInCheck(checkBoard3, Color.WHITE)).isTrue();
-
-        // But wait - the black king is on e8. Let me make sure we properly replace.
-        // Actually, the rook on e8 would mean we're removing the king. Let me set up more carefully:
-        Board cleanCheck = new Board();
-        cleanCheck.removePiece(Square.from("e2"));
-        cleanCheck.setPiece(Square.from("e2"), new Piece(Color.BLACK, PieceType.QUEEN));
-        // No, that's adjacent... let me put the queen farther:
-        Board cleanCheck2 = new Board();
-        cleanCheck2.removePiece(Square.from("e2"));
-        cleanCheck2.setPiece(Square.from("a5"), new Piece(Color.BLACK, PieceType.QUEEN));
-        // a5 checks e1? a5 file=0 rank=4, e1 file=4 rank=0. Diagonal? df=4, dr=-4. YES!
-        assertThat(generator.isKingInCheck(cleanCheck2, Color.WHITE)).isTrue();
+        assertThat(generator.isKingInCheck(board, Color.WHITE)).isTrue();
     }
 
     @Test
