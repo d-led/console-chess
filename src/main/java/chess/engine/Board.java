@@ -58,28 +58,30 @@ public class Board {
 
     public List<Square> allPiecesOfColor(Color color) {
         List<Square> result = new ArrayList<>();
-        for (int r = 0; r < 8; r++) {
-            for (int f = 0; f < 8; f++) {
-                Piece p = squares[r][f];
-                if (p != null && p.color() == color) {
-                    result.add(new Square(f, r));
-                }
-            }
-        }
+        forEachPieceOfColor(color, (sq, p) -> result.add(sq));
         return result;
     }
 
     public int materialScore(Color color) {
-        int score = 0;
+        int[] score = {0};
+        forEachPieceOfColor(color, (sq, p) -> score[0] += p.value());
+        return score[0];
+    }
+
+    private void forEachPieceOfColor(Color color, PieceConsumer action) {
         for (int r = 0; r < 8; r++) {
             for (int f = 0; f < 8; f++) {
                 Piece p = squares[r][f];
                 if (p != null && p.color() == color) {
-                    score += p.value();
+                    action.accept(new Square(f, r), p);
                 }
             }
         }
-        return score;
+    }
+
+    @FunctionalInterface
+    private interface PieceConsumer {
+        void accept(Square sq, Piece piece);
     }
 
     private void setupInitialPosition() {

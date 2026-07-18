@@ -12,37 +12,39 @@ public class GamePrinter {
 
     public void print(GameState game, VirtualTerminal vt) {
         vt.append("\n  === Console Chess ===\n\n");
-
-        // Board
         Board board = game.board();
+        renderBoard(vt, board);
+        vt.append("    a  b  c  d  e  f  g  h\n\n");
+        renderStatus(vt, game, board);
+        renderCaptured(vt, board);
+    }
+
+    private void renderBoard(VirtualTerminal vt, Board board) {
         for (int rank = 7; rank >= 0; rank--) {
             vt.append("  " + (rank + 1) + " ");
             for (int file = 0; file < 8; file++) {
-                Square sq = new Square(file, rank);
-                Piece piece = board.pieceAt(sq).orElse(null);
-                String symbol = piece == null ? "." : piece.symbol();
-                vt.append(" " + symbol + " ");
+                Piece piece = board.pieceAt(new Square(file, rank)).orElse(null);
+                vt.append(" " + (piece == null ? "." : piece.symbol()) + " ");
             }
             vt.append("\n");
         }
-        vt.append("    a  b  c  d  e  f  g  h\n\n");
+    }
 
-        // Status
+    private void renderStatus(VirtualTerminal vt, GameState game, Board board) {
         String status = switch (game.status()) {
             case IN_PROGRESS -> turnName(game.currentTurn()) + " to move";
             case OUTLINE_WINS -> "Outline wins!";
             case FILLED_WINS -> "Filled wins!";
             case STALEMATE -> "Stalemate!";
         };
-
-        boolean inCheck = game.moveGenerator().isKingInCheck(board, game.currentTurn());
-        if (inCheck && game.status() == GameState.GameStatus.IN_PROGRESS) {
+        if (game.moveGenerator().isKingInCheck(board, game.currentTurn())
+                && game.status() == GameState.GameStatus.IN_PROGRESS) {
             status += " (in check)";
         }
-
         vt.append("  " + status + "\n");
+    }
 
-        // Captured material
+    private void renderCaptured(VirtualTerminal vt, Board board) {
         int outlineMat = board.materialScore(Color.OUTLINE);
         int filledMat = board.materialScore(Color.FILLED);
         if (outlineMat < 39 || filledMat < 39) {

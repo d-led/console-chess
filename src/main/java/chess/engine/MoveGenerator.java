@@ -52,41 +52,51 @@ public class MoveGenerator {
         };
     }
 
+    private static final PieceType[] PROMOTION_PIECES =
+        {PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT};
+
+    private record PawnParams(int direction, int startRank, int promoRank) {}
+
     private List<Move> generatePawnMoves(Board board, Square from, Color color) {
         List<Move> moves = new ArrayList<>();
-        int direction = color == Color.OUTLINE ? 1 : -1;
-        int startRank = color == Color.OUTLINE ? 1 : 6;
-        int promoRank = color == Color.OUTLINE ? 7 : 0;
+        PawnParams p = new PawnParams(
+            color == Color.OUTLINE ? 1 : -1,
+            color == Color.OUTLINE ? 1 : 6,
+            color == Color.OUTLINE ? 7 : 0
+        );
 
-        // Single push
-        Square oneAhead = from.offset(0, direction);
-        if (oneAhead != null && board.pieceAt(oneAhead).isEmpty()) {
-            addPawnMoveOrPromotion(moves, from, oneAhead, promoRank);
-            // Double push from start
-            Square twoAhead = from.offset(0, 2 * direction);
-            if (from.rank() == startRank && twoAhead != null && board.pieceAt(twoAhead).isEmpty()) {
-                moves.add(new Move(from, twoAhead));
-            }
-        }
-
-        // Captures
-        for (int df : new int[]{-1, 1}) {
-            Square capture = from.offset(df, direction);
-            if (capture != null) {
-                board.pieceAt(capture).ifPresent(target -> {
-                    if (target.color() != color) {
-                        addPawnMoveOrPromotion(moves, from, capture, promoRank);
-                    }
-                });
-            }
-        }
-
+        addPawnPushes(board, from, p, moves);
+        addPawnCaptures(board, from, color, p, moves);
         return moves;
+    }
+
+    private void addPawnPushes(Board board, Square from, PawnParams p, List<Move> moves) {
+        Square oneAhead = from.offset(0, p.direction);
+        if (oneAhead == null || board.pieceAt(oneAhead).isPresent()) return;
+
+        addPawnMoveOrPromotion(moves, from, oneAhead, p.promoRank);
+
+        Square twoAhead = from.offset(0, 2 * p.direction);
+        if (from.rank() == p.startRank && twoAhead != null && board.pieceAt(twoAhead).isEmpty()) {
+            moves.add(new Move(from, twoAhead));
+        }
+    }
+
+    private void addPawnCaptures(Board board, Square from, Color color, PawnParams p, List<Move> moves) {
+        for (int df : new int[]{-1, 1}) {
+            Square capture = from.offset(df, p.direction);
+            if (capture == null) continue;
+            board.pieceAt(capture).ifPresent(target -> {
+                if (target.color() != color) {
+                    addPawnMoveOrPromotion(moves, from, capture, p.promoRank);
+                }
+            });
+        }
     }
 
     private void addPawnMoveOrPromotion(List<Move> moves, Square from, Square to, int promoRank) {
         if (to.rank() == promoRank) {
-            for (PieceType pt : new PieceType[]{PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT}) {
+            for (PieceType pt : PROMOTION_PIECES) {
                 moves.add(new Move(from, to, pt));
             }
         } else {
@@ -130,18 +140,18 @@ public class MoveGenerator {
         return moves;
     }
 
+    private static final int[][] KING_OFFSETS = {
+        {-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}
+    };
+
     private List<Move> generateKingMoves(Board board, Square from, Color color) {
         List<Move> moves = new ArrayList<>();
-        for (int df = -1; df <= 1; df++) {
-            for (int dr = -1; dr <= 1; dr++) {
-                if (df == 0 && dr == 0) continue;
-                Square to = from.offset(df, dr);
-                if (to != null) {
-                    Optional<Piece> target = board.pieceAt(to);
-                    if (target.isEmpty() || target.get().color() != color) {
-                        moves.add(new Move(from, to));
-                    }
-                }
+        for (int[] off : KING_OFFSETS) {
+            Square to = from.offset(off[0], off[1]);
+            if (to == null) continue;
+            Optional<Piece> target = board.pieceAt(to);
+            if (target.isEmpty() || target.get().color() != color) {
+                moves.add(new Move(from, to));
             }
         }
         return moves;

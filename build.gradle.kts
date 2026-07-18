@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    pmd
     id("org.graalvm.buildtools.native") version "0.10.3"
 }
 
@@ -36,6 +37,13 @@ application {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+pmd {
+    toolVersion = "7.9.0"
+    isConsoleOutput = true
+    ruleSets = listOf()
+    ruleSetFiles = files("config/pmd/rules.xml")
 }
 
 graalvmNative {

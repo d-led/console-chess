@@ -1,15 +1,28 @@
 package chess.engine;
 
+import java.util.Map;
+
 public record Piece(Color color, PieceType type) {
+
+    private static final Map<PieceType, String> OUTLINE_SYMBOLS = Map.of(
+        PieceType.KING,   "♔",
+        PieceType.QUEEN,  "♕",
+        PieceType.ROOK,   "♖",
+        PieceType.BISHOP, "♗",
+        PieceType.KNIGHT, "♘",
+        PieceType.PAWN,   "♙"
+    );
+    private static final Map<PieceType, String> FILLED_SYMBOLS = Map.of(
+        PieceType.KING,   "♚",
+        PieceType.QUEEN,  "♛",
+        PieceType.ROOK,   "♜",
+        PieceType.BISHOP, "♝",
+        PieceType.KNIGHT, "♞",
+        PieceType.PAWN,   "♟"
+    );
+
     public String symbol() {
-        return switch (type) {
-            case KING -> color == Color.OUTLINE ? "♔" : "♚";
-            case QUEEN -> color == Color.OUTLINE ? "♕" : "♛";
-            case ROOK -> color == Color.OUTLINE ? "♖" : "♜";
-            case BISHOP -> color == Color.OUTLINE ? "♗" : "♝";
-            case KNIGHT -> color == Color.OUTLINE ? "♘" : "♞";
-            case PAWN -> color == Color.OUTLINE ? "♙" : "♟";
-        };
+        return (color == Color.OUTLINE ? OUTLINE_SYMBOLS : FILLED_SYMBOLS).get(type);
     }
 
     public int value() {
