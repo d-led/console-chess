@@ -22,6 +22,8 @@ public class ChessModel implements Model {
       Style.newStyle().background(Color.color("33")).foreground(Color.color(FG));
   private static final Style TITLE = Style.newStyle().foreground(Color.color("226")).bold(true);
   private static final Style ALERT = Style.newStyle().foreground(Color.color("196")).bold(true);
+  private static final Style LAST_MOVE_STYLE =
+      Style.newStyle().background(Color.color("24")).foreground(Color.color(FG));
 
   private final GameState game;
   private final ChessEngine engine;
@@ -31,6 +33,7 @@ public class ChessModel implements Model {
   private List<Square> legalDests;
   private String message;
   private boolean playerIsOutline = true;
+  private Move lastMove;
 
   public ChessModel() {
     this(new NoiseEngine());
@@ -160,9 +163,11 @@ public class ChessModel implements Model {
     }
 
     // AI's turn
+    lastMove = null;
     var aiMove = engine.selectMove(game);
     if (aiMove.isPresent()) {
       game.makeMove(aiMove.get());
+      lastMove = aiMove.get();
     }
 
     if (game.status() != GameState.GameStatus.IN_PROGRESS) {
@@ -201,13 +206,16 @@ public class ChessModel implements Model {
     boolean isCursor = cursorFile == file && cursorRank == rank;
     boolean isLegalDest = legalDests.contains(sq);
     boolean isLight = (file + rank) % 2 == 0;
+    boolean isLastMove = lastMove != null
+        && (sq.equals(lastMove.from()) || sq.equals(lastMove.to()));
 
     CellState state =
         CellState.classify(
             hasSelection,
             isCursor,
             isLegalDest,
-            selectedSquare != null && selectedSquare.equals(sq));
+            selectedSquare != null && selectedSquare.equals(sq),
+            isLastMove);
 
     Piece piece = game.board().pieceAt(sq).orElse(null);
     String symbol = state.symbol != null ? state.symbol : (piece == null ? " " : piece.symbol());
@@ -224,6 +232,7 @@ public class ChessModel implements Model {
     CURSOR_LEGAL(LEGAL, "▸", "◂", null),
     CURSOR_FREE(CURSOR, null, null, null),
     LEGAL_DEST(LEGAL, null, null, null),
+    LAST_MOVE(LAST_MOVE_STYLE, null, null, null),
     NORMAL(null, null, null, null);
 
     final Style explicitStyle;
@@ -241,12 +250,17 @@ public class ChessModel implements Model {
     }
 
     static CellState classify(
-        boolean hasSelection, boolean isCursor, boolean isLegalDest, boolean isSelected) {
+        boolean hasSelection,
+        boolean isCursor,
+        boolean isLegalDest,
+        boolean isSelected,
+        boolean isLastMove) {
       if (isSelected) return SELECTED;
       if (isCursor && hasSelection && !isLegalDest) return CURSOR_FORBIDDEN;
       if (isCursor && hasSelection && isLegalDest) return CURSOR_LEGAL;
       if (isCursor && !hasSelection) return CURSOR_FREE;
       if (isLegalDest) return LEGAL_DEST;
+      if (isLastMove) return LAST_MOVE;
       return NORMAL;
     }
   }
