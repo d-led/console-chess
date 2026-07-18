@@ -23,7 +23,6 @@ dependencies {
         exclude(group = "org.jline", module = "jline-terminal-jni")
         exclude(group = "org.jline", module = "jline-native")
     }
-    // JNA terminal backend (works on macOS, Linux, Windows without native libs)
     implementation("org.jline:jline-terminal-jna:3.26.1")
     implementation("net.java.dev.jna:jna:5.14.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
