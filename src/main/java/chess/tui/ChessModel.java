@@ -18,8 +18,6 @@ public class ChessModel implements Model {
         .background(Color.color("100")).foreground(Color.color("255"));
     private static final Style LEGAL = Style.newStyle()
         .background(Color.color("58")).foreground(Color.color("255"));
-    private static final Style CURSOR = Style.newStyle()
-        .background(Color.color("33")).foreground(Color.color("255"));
     private static final Style TITLE = Style.newStyle()
         .foreground(Color.color("226")).bold(true);
     private static final Style ALERT = Style.newStyle()
@@ -155,26 +153,44 @@ public class ChessModel implements Model {
         sb.append("\n  ").append(TITLE.render("♞ Console Chess ♞")).append("\n\n");
 
         // Board
+        boolean hasSelection = selectedSquare != null;
         for (int rank = 7; rank >= 0; rank--) {
             sb.append("  ").append(rank + 1).append(" ");
             for (int file = 0; file < 8; file++) {
                 Square sq = new Square(file, rank);
                 boolean isLight = (file + rank) % 2 == 0;
-
-                Style cellStyle;
-                if (selectedSquare != null && selectedSquare.equals(sq)) {
-                    cellStyle = SEL;
-                } else if (legalDests.contains(sq)) {
-                    cellStyle = LEGAL;
-                } else if (cursorFile == file && cursorRank == rank) {
-                    cellStyle = CURSOR;
-                } else {
-                    cellStyle = isLight ? LIGHT_SQ : DARK_SQ;
-                }
+                boolean isCursor = cursorFile == file && cursorRank == rank;
+                boolean isLegalDest = legalDests.contains(sq);
+                boolean isSelected = hasSelection && selectedSquare.equals(sq);
 
                 Piece piece = game.board().pieceAt(sq).orElse(null);
-                String cell = piece == null ? " " : piece.symbol();
-                sb.append(cellStyle.render(" " + cell + " "));
+                String symbol = piece == null ? " " : piece.symbol();
+
+                Style cellStyle = isLight ? LIGHT_SQ : DARK_SQ;
+                String left = " ";
+                String right = " ";
+
+                if (isSelected) {
+                    cellStyle = SEL;
+                    left = "["; right = "]";
+                } else if (isCursor && hasSelection && !isLegalDest) {
+                    // Cursor on forbidden square while a piece is selected
+                    symbol = "⛝";
+                    cellStyle = isLight ? LIGHT_SQ : DARK_SQ;
+                } else if (isCursor && hasSelection && isLegalDest) {
+                    // Cursor on a legal destination — show with marker
+                    cellStyle = LEGAL;
+                    left = "▸"; right = "◂";
+                } else if (isCursor && !hasSelection) {
+                    // Free cursor — border marker so it's visible on any background
+                    cellStyle = isLight ? LIGHT_SQ : DARK_SQ;
+                    left = "»";
+                    right = "«";
+                } else if (isLegalDest) {
+                    cellStyle = LEGAL;
+                }
+
+                sb.append(cellStyle.render(left + symbol + right));
             }
             sb.append("\n");
         }
