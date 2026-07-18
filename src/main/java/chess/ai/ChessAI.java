@@ -5,7 +5,15 @@ import java.util.*;
 
 public class ChessAI {
 
-    private final Random random = new Random();
+    private final Random random;
+
+    public ChessAI() {
+        this(new Random());
+    }
+
+    public ChessAI(Random random) {
+        this.random = random;
+    }
 
     /** Scores from black's perspective. Positive = good for black. */
     public int evaluate(Board board) {
@@ -77,8 +85,8 @@ public class ChessAI {
         MoveGenerator mg = new MoveGenerator();
         int mobility = mg.generatePseudoLegalMoves(board, aiColor).size();
 
-        // Add randomness for ELO ~1000 feel
-        int noise = new Random().nextInt(20) - 10; // -10 to +10
+        // Add randomness for ELO ~1000 feel (uses seeded random for reproducibility)
+        int noise = random.nextInt(20) - 10; // -10 to +10
 
         return material * 100 + centerBonus * 10 + mobility + noise;
     }

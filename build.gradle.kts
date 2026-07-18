@@ -27,6 +27,7 @@ dependencies {
     implementation("net.java.dev.jna:jna:5.14.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
     testImplementation("org.assertj:assertj-core:3.26.3")
+    testImplementation("com.approvaltests:approvaltests:24.5.0")
 }
 
 application {
