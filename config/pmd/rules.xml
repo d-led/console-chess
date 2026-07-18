@@ -9,8 +9,8 @@
     <!-- Cyclomatic complexity: max 10 -->
     <rule ref="category/java/design.xml/CyclomaticComplexity">
         <properties>
-            <property name="methodReportLevel" value="22" />
-            <property name="classReportLevel" value="85" />
+            <property name="methodReportLevel" value="12" />
+            <property name="classReportLevel" value="60" />
         </properties>
     </rule>
 
@@ -31,7 +31,7 @@
     <!-- Don't nest too deep -->
     <rule ref="category/java/design.xml/NPathComplexity">
         <properties>
-            <property name="reportLevel" value="500" />
+            <property name="reportLevel" value="300" />
         </properties>
     </rule>
 

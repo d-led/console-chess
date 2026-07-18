@@ -53,6 +53,10 @@ spotless {
         target("src/**/*.java")
         targetExclude("src/test/**/*.txt")
     }
+    kotlinGradle {
+        ktlint()
+        target("*.gradle.kts")
+    }
     format("misc") {
         target("*.md", "scripts/**/*.sh")
         trimTrailingWhitespace()
