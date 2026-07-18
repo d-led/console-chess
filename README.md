@@ -18,6 +18,25 @@ This builds the JVM distribution if needed, then launches the game.
 | Enter / Space | Select piece, confirm move |
 | `q` | Quit |
 
+## Engines
+
+Three engines behind a common `ChessEngine` interface. Select with `-e`:
+
+```bash
+./scripts/chess.sh play       # default: noise, medium
+chess -e noise -d easy        # ELO ~750
+chess -e noise -d hard        # ELO ~1250
+chess -e adam                 # ELO ~1600, minimax + piece-square tables
+chess -e greedy               # ELO ~500, captures everything
+chess -e noise -d medium -s 42  # reproducible with seed
+```
+
+| Engine | ELO | Description |
+|--------|-----|-------------|
+| `noise` (default) | 750–1250 | Material + center + mobility + configurable noise |
+| `adam` | ~1600 | Minimax search + piece-square positional tables |
+| `greedy` | ~500 | Always captures highest-value piece |
+
 ## Scripts
 
 All commands live in `./scripts/chess.sh`:
@@ -57,7 +76,10 @@ src/main/java/chess/
 │   ├── MoveGenerator.java     # Legal move generation + check detection
 │   └── GameState.java         # Turn management + game status
 ├── ai/
-│   └── ChessAI.java           # ELO ~1000: material + center + mobility + noise
+│   ├── ChessEngine.java      # Interface: name() + selectMove()
+│   ├── NoiseEngine.java      # ELO 750-1250 (default)
+│   ├── AdamEngine.java       # ELO ~1600, minimax + piece-square tables
+│   └── GreedyEngine.java     # ELO ~500, captures everything
 └── tui/
     ├── ChessModel.java        # tui4j Model: board, cursor, piece selection
     └── virtual/
@@ -72,3 +94,10 @@ src/main/java/chess/
 - **JUnit 5** + **AssertJ** — unit tests
 - **[ApprovalTests](https://github.com/approvals/ApprovalTests.Java)** — snapshot testing
 - **GraalVM** — optional native binary
+
+## Acknowledgements
+
+`AdamEngine` is a Java port of the evaluation and search logic from
+**[adam-mcdaniel/chess-engine](https://github.com/adam-mcdaniel/chess-engine)**
+(MIT license). The piece-square positional tables and negamax minimax
+search are adapted from that project.

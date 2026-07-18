@@ -9,18 +9,15 @@ import java.util.*;
  */
 public class NoiseEngine implements ChessEngine {
 
-    /** Default noise amplitude: 10 → ELO ~1000. Higher = weaker. */
-    public static final int DEFAULT_NOISE = 10;
-
     private final Random random;
     private final int noiseAmplitude;
 
     public NoiseEngine() {
-        this(new Random(), DEFAULT_NOISE);
+        this(new Random(), 10);
     }
 
     public NoiseEngine(Random random) {
-        this(random, DEFAULT_NOISE);
+        this(random, 10);
     }
 
     public NoiseEngine(Random random, int noiseAmplitude) {
@@ -30,7 +27,7 @@ public class NoiseEngine implements ChessEngine {
 
     @Override
     public String name() {
-        return "Noise (~ELO " + (1000 + (DEFAULT_NOISE - noiseAmplitude) * 50) + ")";
+        return "Noise (~ELO " + (1000 + (10 - noiseAmplitude) * 50) + ")";
     }
 
     @Override

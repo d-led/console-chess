@@ -1,5 +1,7 @@
 package chess;
 
+import chess.ai.AdamEngine;
+import chess.ai.GreedyEngine;
 import chess.ai.NoiseEngine;
 import chess.engine.ChessEngine;
 import chess.tui.ChessModel;
@@ -10,20 +12,20 @@ import java.util.Random;
 
 public class ChessApp {
 
-    // NoiseEngine is the only engine — difficulty controlled via noise amplitude.
-    // Lower noise = stronger play. No external Java chess AI libraries exist on Maven Central.
-    private static final Map<String, Integer> PRESETS = Map.of(
-        "easy",   15,
-        "medium", 10,
-        "hard",    5
+    private static final Map<String, Integer> NOISE_PRESETS = Map.of(
+        "easy",   NoiseEngine.DEFAULT_NOISE + 5,
+        "medium", NoiseEngine.DEFAULT_NOISE,
+        "hard",   NoiseEngine.DEFAULT_NOISE - 5
     );
 
     public static void main(String[] args) {
+        String engine = "noise";
         String difficulty = "medium";
         long seed = System.currentTimeMillis();
 
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
+                case "--engine", "-e"    -> engine = args[++i];
                 case "--difficulty", "-d" -> difficulty = args[++i];
                 case "--seed", "-s"       -> seed = Long.parseLong(args[++i]);
                 case "--help", "-h"       -> { printUsage(); return; }
@@ -31,18 +33,23 @@ public class ChessApp {
             }
         }
 
-        int noiseAmp = PRESETS.getOrDefault(difficulty, 10);
-        ChessEngine engine = new NoiseEngine(new Random(seed), noiseAmp);
+        ChessEngine eng = switch (engine) {
+            case "greedy"  -> new GreedyEngine(new Random(seed));
+            case "adam"    -> new AdamEngine();
+            case "noise"   -> new NoiseEngine(new Random(seed), NOISE_PRESETS.getOrDefault(difficulty, NoiseEngine.DEFAULT_NOISE));
+            default        -> { System.err.println("Unknown engine: " + engine); printUsage(); return; }
+        };
 
-        System.err.println("[difficulty: " + difficulty + " (~ELO " + (1000 + (10 - noiseAmp) * 50) + "), seed: " + seed + "]");
-
-        new Program(new ChessModel(engine)).run();
+        System.err.println("[engine: " + eng.name() + ", seed: " + seed + "]");
+        new Program(new ChessModel(eng)).run();
     }
 
-    private static void printUsage() {
-        System.out.println("Usage: chess [-d easy|medium|hard] [-s <seed>]");
-        System.out.println("  -d easy     ELO ~750  (high noise)");
-        System.out.println("  -d medium   ELO ~1000 (default)");
-        System.out.println("  -d hard     ELO ~1250 (low noise)");
+    private static void printUsage() {adam|greedy] [-d easy|medium|hard] [-s <seed>]");
+        System.out.println("Engines:");
+        System.out.println("  noise    ELO 750-1250 (default), responds to -d");
+        System.out.println("  adam     ELO ~1600, minimax + piece-square tables (MIT, adam-mcdaniel/chess-engine)
+        System.out.println("  noise    ELO 750-1250 (default), responds to -d");
+        System.out.println("  greedy   ELO ~500, captures everything, ignores -d");
+        System.out.println("Difficulty (noise engine only): easy | medium* | hard");
     }
 }
