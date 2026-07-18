@@ -4,14 +4,14 @@ import chess.engine.*;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.*;
 
-class ChessAITest {
+class NoiseEngineTest {
 
-    private final ChessAI ai = new ChessAI();
+    private final NoiseEngine engine = new NoiseEngine();
 
     @Test
     void selectMoveReturnsLegalMove() {
         GameState game = new GameState();
-        var move = ai.selectMove(game);
+        var move = engine.selectMove(game);
         assertThat(move).isPresent();
         assertThat(game.legalMoves()).contains(move.get());
     }
@@ -69,23 +69,13 @@ class ChessAITest {
         // Since AI uses scoring, a capture should generally score higher.
         // But with randomness, we can't assert it always picks the capture.
         // Just verify the returned move is legal.
-        var move = ai.selectMove(game);
+        var move = engine.selectMove(game);
         assertThat(move).isPresent();
         assertThat(game.legalMoves()).contains(move.get());
     }
 
     @Test
-    void evaluateScoresEqualMaterialAsZeroAtStart() {
-        Board board = new Board();
-        int score = ai.evaluate(board);
-        assertThat(score).isEqualTo(39 - 39); // equal material = 0
-    }
-
-    @Test
-    void evaluateScoresAdvantageForSideWithMoreMaterial() {
-        Board board = new Board();
-        board.removePiece(Square.from("e7")); // remove black pawn
-        int score = ai.evaluate(board);
-        assertThat(score).isEqualTo(38 - 39); // black down one pawn = -1
+    void engineNameIsDescriptive() {
+        assertThat(engine.name()).contains("Noise");
     }
 }

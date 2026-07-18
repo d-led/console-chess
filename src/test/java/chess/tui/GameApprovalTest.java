@@ -1,6 +1,6 @@
 package chess.tui;
 
-import chess.ai.ChessAI;
+import chess.ai.NoiseEngine;
 import chess.engine.*;
 import chess.tui.virtual.GamePrinter;
 import chess.tui.virtual.VirtualTerminal;
@@ -21,7 +21,7 @@ class GameApprovalTest {
     void playFullGameWithFixedSeedAI() {
         // Fixed seed for deterministic AI
         Random seeded = new Random(42);
-        ChessAI ai = new ChessAI(seeded);
+        NoiseEngine engine = new NoiseEngine(seeded);
         GameState game = new GameState();
         VirtualTerminal vt = new VirtualTerminal();
 
@@ -35,7 +35,7 @@ class GameApprovalTest {
         };
 
         // Actually, let's just play sensible moves and let AI respond
-        // Simpler: use GameState.makeMove for player, then ai.selectMove for AI
+        // Simpler: use GameState.makeMove for player, then engine.selectMove for AI
 
         List<String> allPlayerMoves = List.of(
             "e2e4", "g1f3", "d2d4", "b1c3", "c1g5",
@@ -54,7 +54,7 @@ class GameApprovalTest {
 
             // AI responds
             if (game.status() == GameState.GameStatus.IN_PROGRESS) {
-                var aiMove = ai.selectMove(game);
+                var aiMove = engine.selectMove(game);
                 if (aiMove.isPresent()) {
                     game.makeMove(aiMove.get());
                     printer.print(game, vt);

@@ -1,6 +1,6 @@
 package chess.tui;
 
-import chess.ai.ChessAI;
+import chess.ai.NoiseEngine;
 import chess.engine.*;
 import com.williamcallahan.tui4j.compat.bubbletea.*;
 import com.williamcallahan.tui4j.compat.lipgloss.Style;
@@ -27,7 +27,7 @@ public class ChessModel implements Model {
         .foreground(Color.color("196")).bold(true);
 
     private final GameState game;
-    private final ChessAI ai;
+    private final ChessEngine engine;
     private int cursorFile;
     private int cursorRank;
     private Square selectedSquare;
@@ -36,8 +36,12 @@ public class ChessModel implements Model {
     private boolean playerIsOutline = true;
 
     public ChessModel() {
+        this(new NoiseEngine());
+    }
+
+    public ChessModel(ChessEngine engine) {
         this.game = new GameState();
-        this.ai = new ChessAI();
+        this.engine = engine;
         this.cursorFile = 4;
         this.cursorRank = playerIsOutline ? 1 : 6;
         this.legalDests = List.of();
@@ -150,7 +154,7 @@ public class ChessModel implements Model {
         }
 
         // AI's turn
-        var aiMove = ai.selectMove(game);
+        var aiMove = engine.selectMove(game);
         if (aiMove.isPresent()) {
             game.makeMove(aiMove.get());
         }
