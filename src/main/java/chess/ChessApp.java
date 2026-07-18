@@ -21,6 +21,26 @@ public class ChessApp {
           NoiseEngine.DEFAULT_NOISE - 5);
 
   public static void main(String[] args) {
+    var opts = parseArgs(args);
+    if (opts == null) return;
+
+    ChessEngine eng =
+        switch (opts.engine) {
+          case "greedy" -> new GreedyEngine(new Random(opts.seed));
+          case "adam" -> new AdamEngine();
+          default ->
+              new NoiseEngine(
+                  new Random(opts.seed),
+                  NOISE_PRESETS.getOrDefault(opts.difficulty, NoiseEngine.DEFAULT_NOISE));
+        };
+
+    System.err.println("[engine: " + eng.name() + ", seed: " + opts.seed + "]");
+    new Program(new ChessModel(eng)).run();
+  }
+
+  private record Options(String engine, String difficulty, long seed) {}
+
+  private static Options parseArgs(String[] args) {
     String engine = "noise";
     String difficulty = "medium";
     long seed = System.currentTimeMillis();
@@ -32,35 +52,16 @@ public class ChessApp {
         case "--seed", "-s" -> seed = Long.parseLong(args[++i]);
         case "--help", "-h" -> {
           printUsage();
-          return;
+          return null;
         }
         default -> {
           System.err.println("Unknown: " + args[i]);
           printUsage();
-          return;
+          return null;
         }
       }
     }
-
-    ChessEngine eng =
-        switch (engine) {
-          case "greedy" -> new GreedyEngine(new Random(seed));
-          case "adam" -> new AdamEngine();
-          case "noise" ->
-              new NoiseEngine(
-                  new Random(seed),
-                  NOISE_PRESETS.getOrDefault(difficulty, NoiseEngine.DEFAULT_NOISE));
-          default -> null;
-        };
-
-    if (eng == null) {
-      System.err.println("Unknown engine: " + engine);
-      printUsage();
-      return;
-    }
-
-    System.err.println("[engine: " + eng.name() + ", seed: " + seed + "]");
-    new Program(new ChessModel(eng)).run();
+    return new Options(engine, difficulty, seed);
   }
 
   private static void printUsage() {

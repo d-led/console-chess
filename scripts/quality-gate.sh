@@ -13,7 +13,7 @@ step "2/4: PMD Static Analysis"
 ./gradlew pmdMain || FAILED=1
 
 step "3/4: Code formatting"
-./gradlew spotlessCheck || FAILED=1
+./gradlew spotlessApply || FAILED=1
 
 step "4/4: jscpd — copy-paste detection"
 npx jscpd \

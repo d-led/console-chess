@@ -79,17 +79,30 @@ public class AdamEngine implements ChessEngine {
 
   private double positionalWeight(Piece p, int rank, int file) {
     int r = p.color() == Color.FILLED ? 7 - rank : rank;
-    int f = file;
-    double[][] table =
-        switch (p.type()) {
-          case PAWN -> p.color() == Color.OUTLINE ? W_PAWN : B_PAWN;
-          case KNIGHT -> p.color() == Color.OUTLINE ? W_KNIGHT : B_KNIGHT;
-          case BISHOP -> p.color() == Color.OUTLINE ? W_BISHOP : B_BISHOP;
-          case ROOK -> p.color() == Color.OUTLINE ? W_ROOK : B_ROOK;
-          case QUEEN -> p.color() == Color.OUTLINE ? W_QUEEN : B_QUEEN;
-          case KING -> p.color() == Color.OUTLINE ? W_KING : B_KING;
-        };
-    return table[r][f];
+    int outlineIdx = p.color() == Color.OUTLINE ? 0 : 1;
+    return PIECE_TABLES[p.type().ordinal()][outlineIdx][r][file];
+  }
+
+  // ---- Piece-square tables from adam-mcdaniel/chess-engine (MIT) ----
+
+  // [pieceType][0=outline,1=filled][rank][file]
+  private static final double[][][][] PIECE_TABLES = buildTables();
+
+  private static double[][][][] buildTables() {
+    double[][][][] t = new double[6][2][][];
+    t[PieceType.PAWN.ordinal()][0] = W_PAWN;
+    t[PieceType.PAWN.ordinal()][1] = B_PAWN;
+    t[PieceType.KNIGHT.ordinal()][0] = W_KNIGHT;
+    t[PieceType.KNIGHT.ordinal()][1] = B_KNIGHT;
+    t[PieceType.BISHOP.ordinal()][0] = W_BISHOP;
+    t[PieceType.BISHOP.ordinal()][1] = B_BISHOP;
+    t[PieceType.ROOK.ordinal()][0] = W_ROOK;
+    t[PieceType.ROOK.ordinal()][1] = B_ROOK;
+    t[PieceType.QUEEN.ordinal()][0] = W_QUEEN;
+    t[PieceType.QUEEN.ordinal()][1] = B_QUEEN;
+    t[PieceType.KING.ordinal()][0] = W_KING;
+    t[PieceType.KING.ordinal()][1] = B_KING;
+    return t;
   }
 
   // ---- Piece-square tables from adam-mcdaniel/chess-engine (MIT) ----

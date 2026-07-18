@@ -200,39 +200,56 @@ public class ChessModel implements Model {
     Square sq = new Square(file, rank);
     boolean isCursor = cursorFile == file && cursorRank == rank;
     boolean isLegalDest = legalDests.contains(sq);
-    boolean isSelected = hasSelection && selectedSquare.equals(sq);
+    boolean isLight = (file + rank) % 2 == 0;
+
+    CellState state =
+        CellState.classify(
+            hasSelection,
+            isCursor,
+            isLegalDest,
+            selectedSquare != null && selectedSquare.equals(sq));
 
     Piece piece = game.board().pieceAt(sq).orElse(null);
-    String symbol = piece == null ? " " : piece.symbol();
-    String left = " ", right = " ";
+    String symbol = state.symbol != null ? state.symbol : (piece == null ? " " : piece.symbol());
+    String left = state.left != null ? state.left : " ";
+    String right = state.right != null ? state.right : " ";
+    Style style = state.style(isLight);
 
-    CellStyle cs = cellAppearance(file, rank, hasSelection, isCursor, isLegalDest, isSelected);
-    if (cs.symbol != null) symbol = cs.symbol;
-    if (cs.left != null) left = cs.left;
-    if (cs.right != null) right = cs.right;
-
-    sb.append(cs.style.render(left + symbol + right));
+    sb.append(style.render(left + symbol + right));
   }
 
-  private CellStyle cellAppearance(
-      int file,
-      int rank,
-      boolean hasSelection,
-      boolean isCursor,
-      boolean isLegalDest,
-      boolean isSelected) {
-    boolean isLight = (file + rank) % 2 == 0;
-    Style base = isLight ? LIGHT_SQ : DARK_SQ;
+  private enum CellState {
+    SELECTED(SEL, "[", "]", null),
+    CURSOR_FORBIDDEN(null, " ", " ", "⛝"),
+    CURSOR_LEGAL(LEGAL, "▸", "◂", null),
+    CURSOR_FREE(CURSOR, null, null, null),
+    LEGAL_DEST(LEGAL, null, null, null),
+    NORMAL(null, null, null, null);
 
-    if (isSelected) return new CellStyle(SEL, "[", "]", null);
-    if (isCursor && hasSelection && !isLegalDest) return new CellStyle(base, " ", " ", "⛝");
-    if (isCursor && hasSelection && isLegalDest) return new CellStyle(LEGAL, "▸", "◂", null);
-    if (isCursor && !hasSelection) return new CellStyle(CURSOR, null, null, null);
-    if (isLegalDest) return new CellStyle(LEGAL, null, null, null);
-    return new CellStyle(base, null, null, null);
+    final Style explicitStyle;
+    final String left, right, symbol;
+
+    CellState(Style s, String l, String r, String sym) {
+      this.explicitStyle = s;
+      this.left = l;
+      this.right = r;
+      this.symbol = sym;
+    }
+
+    Style style(boolean isLight) {
+      return explicitStyle != null ? explicitStyle : (isLight ? LIGHT_SQ : DARK_SQ);
+    }
+
+    static CellState classify(
+        boolean hasSelection, boolean isCursor, boolean isLegalDest, boolean isSelected) {
+      if (isSelected) return SELECTED;
+      if (isCursor && hasSelection && !isLegalDest) return CURSOR_FORBIDDEN;
+      if (isCursor && hasSelection && isLegalDest) return CURSOR_LEGAL;
+      if (isCursor && !hasSelection) return CURSOR_FREE;
+      if (isLegalDest) return LEGAL_DEST;
+      return NORMAL;
+    }
   }
-
-  private record CellStyle(Style style, String left, String right, String symbol) {}
 
   private void renderStatus(StringBuilder sb) {
     String line =
