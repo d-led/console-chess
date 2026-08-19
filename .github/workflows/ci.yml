@@ -19,6 +19,9 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v6
 
+      - name: Install Stockfish (for the engine integration test)
+        run: sudo apt-get update && sudo apt-get install -y stockfish
+
       - run: ./gradlew test
 
       - uses: dorny/test-reporter@v3
