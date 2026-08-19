@@ -206,8 +206,8 @@ public class ChessModel implements Model {
     boolean isCursor = cursorFile == file && cursorRank == rank;
     boolean isLegalDest = legalDests.contains(sq);
     boolean isLight = (file + rank) % 2 == 0;
-    boolean isLastMove = lastMove != null
-        && (sq.equals(lastMove.from()) || sq.equals(lastMove.to()));
+    boolean isLastMove =
+        lastMove != null && (sq.equals(lastMove.from()) || sq.equals(lastMove.to()));
 
     CellState state =
         CellState.classify(
@@ -256,9 +256,10 @@ public class ChessModel implements Model {
         boolean isSelected,
         boolean isLastMove) {
       if (isSelected) return SELECTED;
-      if (isCursor && hasSelection && !isLegalDest) return CURSOR_FORBIDDEN;
-      if (isCursor && hasSelection && isLegalDest) return CURSOR_LEGAL;
-      if (isCursor && !hasSelection) return CURSOR_FREE;
+      if (isCursor) {
+        if (!hasSelection) return CURSOR_FREE;
+        return isLegalDest ? CURSOR_LEGAL : CURSOR_FORBIDDEN;
+      }
       if (isLegalDest) return LEGAL_DEST;
       if (isLastMove) return LAST_MOVE;
       return NORMAL;

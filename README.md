@@ -34,7 +34,7 @@ Unzip, make executable (`chmod +x chess-linux`), then run `./chess-linux`.
 
 ## Engines
 
-Three engines behind a common `ChessEngine` interface. Select with `-e`:
+Four engines behind a common `ChessEngine` interface. Select with `-e`:
 
 ```bash
 ./scripts/chess.sh play       # default: noise, medium
@@ -42,14 +42,21 @@ chess -e noise -d easy        # ELO ~750
 chess -e noise -d hard        # ELO ~1250
 chess -e adam                 # ELO ~1600, minimax + piece-square tables
 chess -e greedy               # ELO ~500, captures everything
+chess -e stockfish -d easy    # Stockfish capped at ELO 1350
+chess -e stockfish -d hard    # Stockfish capped at ELO 2800
 chess -e noise -d medium -s 42  # reproducible with seed
 ```
+
+The `stockfish` engine runs the [Stockfish](https://stockfishchess.org/) chess engine as a
+subprocess over the UCI protocol. Install it first (e.g. `brew install stockfish`); it does not
+need to be present for the other engines.
 
 | Engine            | ELO      | Description                                       |
 | ----------------- | -------- | ------------------------------------------------- |
 | `noise` (default) | 750–1250 | Material + center + mobility + configurable noise |
 | `adam`            | ~1600    | Minimax search + piece-square positional tables   |
 | `greedy`          | ~500     | Always captures highest-value piece               |
+| `stockfish`       | 1350–2800 | Stockfish via UCI subprocess, Elo-limited by `-d` |
 
 ## Scripts
 
@@ -88,12 +95,16 @@ src/main/java/chess/
 │   ├── Square.java / Move.java
 │   ├── Board.java             # 8×8 grid + move execution
 │   ├── MoveGenerator.java     # Legal move generation + check detection
+│   ├── Fen.java               # Position → FEN serialization
 │   └── GameState.java         # Turn management + game status
 ├── ai/
 │   ├── ChessEngine.java      # Interface: name() + selectMove()
 │   ├── NoiseEngine.java      # ELO 750-1250 (default)
 │   ├── AdamEngine.java       # ELO ~1600, minimax + piece-square tables
-│   └── GreedyEngine.java     # ELO ~500, captures everything
+│   ├── GreedyEngine.java     # ELO ~500, captures everything
+│   ├── StockfishEngine.java  # Stockfish via UCI subprocess (UciChannel)
+│   ├── UciChannel.java       # stdio abstraction for UCI engines
+│   └── SubprocessUciChannel.java  # ProcessBuilder-backed UciChannel
 └── tui/
     ├── ChessModel.java        # tui4j Model: board, cursor, piece selection
     └── virtual/

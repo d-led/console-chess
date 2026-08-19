@@ -85,9 +85,6 @@ public class AdamEngine implements ChessEngine {
 
   // ---- Piece-square tables from adam-mcdaniel/chess-engine (MIT) ----
 
-  // [pieceType][0=outline,1=filled][rank][file]
-  private static final double[][][][] PIECE_TABLES = buildTables();
-
   private static double[][][][] buildTables() {
     double[][][][] t = new double[6][2][][];
     t[PieceType.PAWN.ordinal()][0] = W_PAWN;
@@ -168,6 +165,9 @@ public class AdamEngine implements ChessEngine {
     {2, 3, 1, 0, 0, 1, 3, 2}
   };
   private static final double[][] B_KING = flip(W_KING);
+
+  // [pieceType][0=outline,1=filled][rank][file]
+  private static final double[][][][] PIECE_TABLES = buildTables();
 
   private static double[][] flip(double[][] t) {
     double[][] r = new double[8][8];

@@ -19,39 +19,22 @@ class NoiseEngineTest {
 
   @Test
   void selectMoveReturnsEmptyWhenNoLegalMoves() {
-    // Create stalemate position
-    GameState game = new GameState();
-    // Clear board and set up stalemate for black
-    for (int r = 0; r < 8; r++)
-      for (int f = 0; f < 8; f++) game.board().removePiece(new Square(f, r));
-
-    game.board().setPiece(Square.from("a8"), new Piece(Color.FILLED, PieceType.KING));
-    game.board().setPiece(Square.from("b6"), new Piece(Color.OUTLINE, PieceType.QUEEN));
+    GameState game = emptyBoard();
     game.board().setPiece(Square.from("a1"), new Piece(Color.OUTLINE, PieceType.KING));
+    game.board().setPiece(Square.from("b3"), new Piece(Color.FILLED, PieceType.QUEEN));
+    game.board().setPiece(Square.from("h8"), new Piece(Color.FILLED, PieceType.KING));
 
-    // Black to move, but it's white's turn in the game... this won't work directly.
-    // We need a GameState where it's AI's turn AND AI has no moves.
-    // Just test that legalMoves being empty returns empty:
-    // Let's build a scenario: make it black's turn in stalemate
-    // Actually GameState always starts with white, so let's just verify
-    // the behavior contract: empty moves -> empty result.
-    // We can test this indirectly: game with no legal moves returns empty.
-    // Let me create a custom scenario.
+    assertThat(engine.selectMove(game)).isEmpty();
+  }
 
-    GameState stalemateGame = new GameState();
-    // Remove all pieces
-    for (int r = 0; r < 8; r++)
-      for (int f = 0; f < 8; f++) stalemateGame.board().removePiece(new Square(f, r));
-
-    // White king on a1, black king on a8, white queen creating stalemate for black
-    stalemateGame.board().setPiece(Square.from("a1"), new Piece(Color.OUTLINE, PieceType.KING));
-    stalemateGame.board().setPiece(Square.from("h8"), new Piece(Color.FILLED, PieceType.KING));
-    stalemateGame.board().setPiece(Square.from("b6"), new Piece(Color.OUTLINE, PieceType.QUEEN));
-
-    // Force it to be black's turn by making a white move first
-    stalemateGame.makeMove(new Move(Square.from("b6"), Square.from("b7")));
-    // Now it's black's turn in a stalemate-looking position...
-    // This is getting complicated. Let me just assert the basic behavior.
+  private static GameState emptyBoard() {
+    GameState game = new GameState();
+    for (int rank = 0; rank < 8; rank++) {
+      for (int file = 0; file < 8; file++) {
+        game.board().removePiece(new Square(file, rank));
+      }
+    }
+    return game;
   }
 
   @Test
