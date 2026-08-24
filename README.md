@@ -12,6 +12,15 @@ TUI chess in Java — play against an ELO ~1000 AI in your terminal.
 
 This builds the JVM distribution if needed, then launches the game.
 
+## Install
+
+Install the native binary via Homebrew:
+
+```bash
+brew tap d-led/homebrew-d-led
+brew install console-chess
+```
+
 ## Downloads
 
 Pre-built native binaries from the latest `main` build:
