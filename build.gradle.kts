@@ -82,6 +82,11 @@ graalvmNative {
                 // JLine terminal providers need runtime init
                 "--initialize-at-run-time=org.jline.terminal.impl.jna",
                 "--initialize-at-run-time=org.jline.terminal.impl.exec",
+                // ICU4J (via tui4j) loads BreakIteratorFactory reflectively and
+                // reads its compiled break-rule data from resources at runtime.
+                "-H:ReflectionConfigurationFiles=${projectDir}/config/native-image/reflect-config.json",
+                "-H:ResourceConfigurationFiles=${projectDir}/config/native-image/resource-config.json",
+                "--initialize-at-run-time=com.ibm.icu",
                 // Report stack traces for debugging
                 "-H:+ReportExceptionStackTraces",
                 // Include all charsets

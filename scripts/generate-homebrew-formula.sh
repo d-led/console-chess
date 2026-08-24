@@ -2,20 +2,22 @@
 # Generates the Homebrew formula for console-chess from release checksums.
 #
 # Expects the following environment variables:
-#   VERSION          e.g. 1.2.3
-#   SHA_MACOS_ARM64  sha256 of chess-<version>-macos-arm64.tar.gz
-#   SHA_LINUX_ARM64  sha256 of chess-<version>-linux-arm64.tar.gz
-#   SHA_LINUX_X64    sha256 of chess-<version>-linux-x64.tar.gz
+#   VERSION           e.g. 1.2.3
+#   SHA_MACOS_ARM64   sha256 of console-chess-<version>-macos-arm64.tar.gz
+#   SHA_MACOS_X64     sha256 of console-chess-<version>-macos-x64.tar.gz
+#   SHA_LINUX_ARM64   sha256 of console-chess-<version>-linux-arm64.tar.gz
+#   SHA_LINUX_X64     sha256 of console-chess-<version>-linux-x64.tar.gz
 #
 # Usage:
 #   VERSION=1.2.3 \
-#   SHA_MACOS_ARM64=... \
+#   SHA_MACOS_ARM64=... SHA_MACOS_X64=... \
 #   SHA_LINUX_ARM64=... SHA_LINUX_X64=... \
-#   scripts/generate-homebrew-formula.sh > chess.rb
+#   scripts/generate-homebrew-formula.sh > console-chess.rb
 set -euo pipefail
 
 version="${VERSION:?VERSION is required}"
 sha_macos_arm64="${SHA_MACOS_ARM64:?SHA_MACOS_ARM64 is required}"
+sha_macos_x64="${SHA_MACOS_X64:?SHA_MACOS_X64 is required}"
 sha_linux_arm64="${SHA_LINUX_ARM64:?SHA_LINUX_ARM64 is required}"
 sha_linux_x64="${SHA_LINUX_X64:?SHA_LINUX_X64 is required}"
 
@@ -37,6 +39,9 @@ class ConsoleChess < Formula
     if Hardware::CPU.arm?
       url "${base}/console-chess-${version}-macos-arm64.tar.gz"
       sha256 "${sha_macos_arm64}"
+    else
+      url "${base}/console-chess-${version}-macos-x64.tar.gz"
+      sha256 "${sha_macos_x64}"
     end
   end
 
