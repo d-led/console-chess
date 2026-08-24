@@ -1,9 +1,0 @@
-{
-  "resources": {
-    "includes": [
-      {
-        "pattern": "com/ibm/icu/impl/data/.*"
-      }
-    ]
-  }
-}

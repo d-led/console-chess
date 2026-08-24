@@ -84,8 +84,8 @@ graalvmNative {
                 "--initialize-at-run-time=org.jline.terminal.impl.exec",
                 // ICU4J (via tui4j) loads BreakIteratorFactory reflectively and
                 // reads its compiled break-rule data from resources at runtime.
-                "-H:ReflectionConfigurationFiles=${projectDir}/config/native-image/reflect-config.json",
-                "-H:ResourceConfigurationFiles=${projectDir}/config/native-image/resource-config.json",
+                // Reachability metadata is auto-discovered from
+                // src/main/resources/META-INF/native-image/chess/console-chess/.
                 "--initialize-at-run-time=com.ibm.icu",
                 // Report stack traces for debugging
                 "-H:+ReportExceptionStackTraces",

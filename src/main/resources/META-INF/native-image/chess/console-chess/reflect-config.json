@@ -29,5 +29,9 @@
     "methods": [
       { "name": "getRuntimeMXBean", "parameterTypes": [] }
     ]
+  },
+  {
+    "name": "com.ibm.icu.text.BreakIteratorFactory",
+    "allDeclaredConstructors": true
   }
 ]

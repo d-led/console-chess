@@ -9,6 +9,9 @@
       },
       {
         "pattern": "com/sun/jna/.*"
+      },
+      {
+        "pattern": "com/ibm/icu/impl/data/.*"
       }
     ]
   }
