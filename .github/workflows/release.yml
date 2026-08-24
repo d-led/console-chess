@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -27,9 +27,22 @@ jobs:
 
       - run: ./gradlew test
 
+  create-release:
+    name: Create GitHub release
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release create "${GITHUB_REF_NAME}" --generate-notes --title "${GITHUB_REF_NAME}"
+          fi
+
   build:
     name: Build native (${{ matrix.os-name }}/${{ matrix.arch }})
-    needs: test
+    needs: [test, create-release]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -38,9 +51,6 @@ jobs:
           - os: macos-latest
             os-name: macos
             arch: arm64
-          - os: macos-13
-            os-name: macos
-            arch: x64
           - os: ubuntu-latest
             os-name: linux
             arch: x64
@@ -61,69 +71,60 @@ jobs:
       - name: Compile native image
         run: ./gradlew nativeCompile
 
-      - name: Upload binary
+      - name: Package archive and checksum
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          os="${{ matrix.os-name }}"
+          arch="${{ matrix.arch }}"
+          dir="dist/pkg/chess-${version}-${os}-${arch}"
+          mkdir -p "${dir}"
+          cp build/native/nativeCompile/chess "${dir}/chess"
+          chmod +x "${dir}/chess"
+          archive="dist/chess-${version}-${os}-${arch}.tar.gz"
+          tar -czf "${archive}" -C dist/pkg "chess-${version}-${os}-${arch}"
+          sha256sum "${archive}" | awk '{print $1}' > dist/checksum.txt
+
+      - name: Upload archive to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          gh release upload "${GITHUB_REF_NAME}" "dist/chess-${version}-${{ matrix.os-name }}-${{ matrix.arch }}.tar.gz" --clobber
+
+      - name: Upload checksum
         uses: actions/upload-artifact@v7
         with:
-          name: chess-${{ matrix.os-name }}-${{ matrix.arch }}
-          path: build/native/nativeCompile/chess
+          name: checksum-${{ matrix.os-name }}-${{ matrix.arch }}
+          path: dist/checksum.txt
           if-no-files-found: error
 
-  release:
-    name: Publish release and update tap
+  publish-tap:
+    name: Publish formula to tap
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
-      - name: Download binaries
-        uses: actions/download-artifact@v7
+      - name: Download checksums
+        uses: actions/download-artifact@v8
         with:
-          path: dist/binaries
+          path: dist/checksums
 
-      - name: Package archives and checksums
+      - name: Generate formula
         run: |
           set -euo pipefail
           version="${GITHUB_REF_NAME#v}"
-          mkdir -p dist/out dist/pkg
-
-          package() {
-            local os="$1" arch="$2"
-            local dir="dist/pkg/chess-${version}-${os}-${arch}"
-            mkdir -p "${dir}"
-            cp "dist/binaries/chess-${os}-${arch}/chess" "${dir}/chess"
-            chmod +x "${dir}/chess"
-            tar -czf "dist/out/chess-${version}-${os}-${arch}.tar.gz" -C dist/pkg "chess-${version}-${os}-${arch}"
-          }
-
-          package macos arm64
-          package macos x64
-          package linux x64
-          package linux arm64
-
-          (cd dist/out && sha256sum ./*.tar.gz) > dist/checksums.txt
-
-      - name: Generate Homebrew formula
-        run: |
-          set -euo pipefail
-          version="${GITHUB_REF_NAME#v}"
-          sha_macos_arm64="$(awk '$2 ~ /macos-arm64/ {print $1}' dist/checksums.txt)"
-          sha_macos_x64="$(awk '$2 ~ /macos-x64/ {print $1}' dist/checksums.txt)"
-          sha_linux_arm64="$(awk '$2 ~ /linux-arm64/ {print $1}' dist/checksums.txt)"
-          sha_linux_x64="$(awk '$2 ~ /linux-x64/ {print $1}' dist/checksums.txt)"
+          sha_macos_arm64="$(cat dist/checksums/checksum-macos-arm64/checksum.txt)"
+          sha_linux_x64="$(cat dist/checksums/checksum-linux-x64/checksum.txt)"
+          sha_linux_arm64="$(cat dist/checksums/checksum-linux-arm64/checksum.txt)"
 
           VERSION="${version}" \
           SHA_MACOS_ARM64="${sha_macos_arm64}" \
-          SHA_MACOS_X64="${sha_macos_x64}" \
-          SHA_LINUX_ARM64="${sha_linux_arm64}" \
           SHA_LINUX_X64="${sha_linux_x64}" \
+          SHA_LINUX_ARM64="${sha_linux_arm64}" \
           bash scripts/generate-homebrew-formula.sh > dist/chess.rb
-
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/out/*.tar.gz
-            dist/checksums.txt
 
       - name: Update Homebrew tap
         env:
