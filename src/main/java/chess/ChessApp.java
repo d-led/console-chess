@@ -76,7 +76,7 @@ public class ChessApp {
 
   private static void printUsage() {
     System.out.println(
-        "Usage: chess [-e noise|adam|greedy|stockfish] [-d easy|medium|hard] [-s <seed>]");
+        "Usage: console-chess [-e noise|adam|greedy|stockfish] [-d easy|medium|hard] [-s <seed>]");
     System.out.println("Engines:");
     System.out.println("  noise     ELO 750-1250 (default), responds to -d");
     System.out.println(

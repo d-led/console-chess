@@ -38,14 +38,14 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact: chess-linux
-            binary: build/native/nativeCompile/chess
+            artifact: console-chess-linux
+            binary: build/native/nativeCompile/console-chess
           - os: macos-latest
-            artifact: chess-macos-arm64
-            binary: build/native/nativeCompile/chess
+            artifact: console-chess-macos-arm64
+            binary: build/native/nativeCompile/console-chess
           - os: windows-latest
-            artifact: chess-windows
-            binary: build/native/nativeCompile/chess.exe
+            artifact: console-chess-windows
+            binary: build/native/nativeCompile/console-chess.exe
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7

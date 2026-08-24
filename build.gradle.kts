@@ -67,7 +67,7 @@ spotless {
 graalvmNative {
     binaries {
         named("main") {
-            imageName.set("chess")
+            imageName.set("console-chess")
             mainClass.set("chess.ChessApp")
             fallback.set(false)
             verbose.set(true)
@@ -95,5 +95,5 @@ graalvmNative {
 tasks.register<Exec>("runNative") {
     dependsOn("nativeCompile")
     workingDir = projectDir
-    commandLine("${layout.buildDirectory.get()}/native/nativeCompile/chess")
+    commandLine("${layout.buildDirectory.get()}/native/nativeCompile/console-chess")
 }

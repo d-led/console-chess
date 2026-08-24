@@ -4,7 +4,7 @@ cd "$(dirname "$0")/.."
 
 GRAALVM_HOME="${GRAALVM_HOME:-/Library/Java/JavaVirtualMachines/graalvm-25.jdk/Contents/Home}"
 JVM_BIN="build/install/console-chess/bin/console-chess"
-NATIVE_BIN="build/native/nativeCompile/chess"
+NATIVE_BIN="build/native/nativeCompile/console-chess"
 
 usage() {
     echo "Usage: $0 <command>"
@@ -29,7 +29,7 @@ cmd_build() {
 cmd_play() {
     echo "=== Building ==="
     ./gradlew installDist
-    echo "=== Launching chess ==="
+    echo "=== Launching console-chess ==="
     exec "$JVM_BIN"
 }
 
@@ -62,7 +62,7 @@ cmd_nrun() {
     if [[ ! -x "$NATIVE_BIN" ]]; then
         cmd_native
     fi
-    echo "=== Launching native chess ==="
+    echo "=== Launching native console-chess ==="
     exec "$NATIVE_BIN"
 }
 

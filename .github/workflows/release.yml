@@ -79,12 +79,12 @@ jobs:
           version="${GITHUB_REF_NAME#v}"
           os="${{ matrix.os-name }}"
           arch="${{ matrix.arch }}"
-          dir="dist/pkg/chess-${version}-${os}-${arch}"
+          dir="dist/pkg/console-chess-${version}-${os}-${arch}"
           mkdir -p "${dir}"
-          cp build/native/nativeCompile/chess "${dir}/chess"
-          chmod +x "${dir}/chess"
-          archive="dist/chess-${version}-${os}-${arch}.tar.gz"
-          tar -czf "${archive}" -C dist/pkg "chess-${version}-${os}-${arch}"
+          cp build/native/nativeCompile/console-chess "${dir}/console-chess"
+          chmod +x "${dir}/console-chess"
+          archive="dist/console-chess-${version}-${os}-${arch}.tar.gz"
+          tar -czf "${archive}" -C dist/pkg "console-chess-${version}-${os}-${arch}"
           sha256sum "${archive}" | awk '{print $1}' > dist/checksum.txt
 
       - name: Upload archive to release
@@ -93,7 +93,7 @@ jobs:
         run: |
           set -euo pipefail
           version="${GITHUB_REF_NAME#v}"
-          gh release upload "${GITHUB_REF_NAME}" "dist/chess-${version}-${{ matrix.os-name }}-${{ matrix.arch }}.tar.gz" --clobber
+          gh release upload "${GITHUB_REF_NAME}" "dist/console-chess-${version}-${{ matrix.os-name }}-${{ matrix.arch }}.tar.gz" --clobber
 
       - name: Upload checksum
         uses: actions/upload-artifact@v7
@@ -126,7 +126,7 @@ jobs:
           SHA_MACOS_ARM64="${sha_macos_arm64}" \
           SHA_LINUX_X64="${sha_linux_x64}" \
           SHA_LINUX_ARM64="${sha_linux_arm64}" \
-          bash scripts/generate-homebrew-formula.sh > dist/chess.rb
+          bash scripts/generate-homebrew-formula.sh > dist/console-chess.rb
 
       - name: Update Homebrew tap
         env:
@@ -135,13 +135,13 @@ jobs:
           set -euo pipefail
           version="${GITHUB_REF_NAME#v}"
           git clone --depth 1 "https://x-access-token:${PUBLISHER_TOKEN}@github.com/d-led/homebrew-d-led.git" dist/tap
-          cp dist/chess.rb dist/tap/chess.rb
+          cp dist/console-chess.rb dist/tap/console-chess.rb
           git -C dist/tap config user.name "Dmitry Ledentsov"
           git -C dist/tap config user.email "dmlled@yahoo.com"
-          git -C dist/tap add chess.rb
+          git -C dist/tap add console-chess.rb
           if git -C dist/tap diff --cached --quiet; then
             echo "Formula is up to date; nothing to push"
           else
-            git -C dist/tap commit -m "chess ${version}"
+            git -C dist/tap commit -m "console-chess ${version}"
             git -C dist/tap push
           fi

@@ -18,11 +18,11 @@ Pre-built native binaries from the latest `main` build:
 
 | Platform    | Download                                                                                              |
 | ----------- | ----------------------------------------------------------------------------------------------------- |
-| Linux x64   | [chess-linux](https://nightly.link/d-led/console-chess/workflows/ci/main/chess-linux.zip)             |
-| macOS arm64 | [chess-macos-arm64](https://nightly.link/d-led/console-chess/workflows/ci/main/chess-macos-arm64.zip) |
-| Windows x64 | [chess-windows.exe](https://nightly.link/d-led/console-chess/workflows/ci/main/chess-windows.zip)     |
+| Linux x64   | [console-chess-linux](https://nightly.link/d-led/console-chess/workflows/ci/main/console-chess-linux.zip)             |
+| macOS arm64 | [console-chess-macos-arm64](https://nightly.link/d-led/console-chess/workflows/ci/main/console-chess-macos-arm64.zip) |
+| Windows x64 | [console-chess-windows.exe](https://nightly.link/d-led/console-chess/workflows/ci/main/console-chess-windows.zip)     |
 
-Unzip, make executable (`chmod +x chess-linux`), then run `./chess-linux`.
+Unzip, make executable (`chmod +x console-chess`), then run `./console-chess`.
 
 ## Controls
 
@@ -38,13 +38,13 @@ Four engines behind a common `ChessEngine` interface. Select with `-e`:
 
 ```bash
 ./scripts/chess.sh play       # default: noise, medium
-chess -e noise -d easy        # ELO ~750
-chess -e noise -d hard        # ELO ~1250
-chess -e adam                 # ELO ~1600, minimax + piece-square tables
-chess -e greedy               # ELO ~500, captures everything
-chess -e stockfish -d easy    # Stockfish capped at ELO 1350
-chess -e stockfish -d hard    # Stockfish capped at ELO 2800
-chess -e noise -d medium -s 42  # reproducible with seed
+console-chess -e noise -d easy        # ELO ~750
+console-chess -e noise -d hard        # ELO ~1250
+console-chess -e adam                 # ELO ~1600, minimax + piece-square tables
+console-chess -e greedy               # ELO ~500, captures everything
+console-chess -e stockfish -d easy    # Stockfish capped at ELO 1350
+console-chess -e stockfish -d hard    # Stockfish capped at ELO 2800
+console-chess -e noise -d medium -s 42  # reproducible with seed
 ```
 
 The `stockfish` engine runs the [Stockfish](https://stockfishchess.org/) chess engine as a
@@ -81,7 +81,7 @@ Produces a dependency-free binary. Requires GraalVM — set `GRAALVM_HOME` or th
 
 ```bash
 GRAALVM_HOME=/path/to/graalvm ./scripts/chess.sh native
-./build/native/nativeCompile/chess
+./build/native/nativeCompile/console-chess
 ```
 
 ## Project Structure
