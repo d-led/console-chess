@@ -123,7 +123,7 @@ src/main/java/chess/
 
 ## Tech Stack
 
-- **Java 21** + **Gradle 8.14**
+- **Java 25** + **Gradle 8.14**
 - **[tui4j](https://github.com/WilliamAGH/tui4j)** — terminal UI (Elm Architecture)
 - **JUnit 5** + **AssertJ** — unit tests
 - **[ApprovalTests](https://github.com/approvals/ApprovalTests.Java)** — snapshot testing
