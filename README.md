@@ -56,6 +56,16 @@ font to a Unicode one (e.g. Cascadia Mono) or use Windows Terminal.
 | Enter / Space   | Select piece, confirm move |
 | `q`             | Quit                       |
 
+## Version
+
+```bash
+console-chess --version   # or -V
+```
+
+The version is resolved at build time in priority order: an explicit
+`-Pversion=x.y.z` (the release workflow passes the tag), then the `vX.Y.Z` git
+tag on the current commit, then `0.0.0-SNAPSHOT`.
+
 ## Engines
 
 Four engines behind a common `ChessEngine` interface. Select with `-e`:

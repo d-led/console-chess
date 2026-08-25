@@ -8,7 +8,38 @@ plugins {
 }
 
 group = "chess"
-version = "1.0.0"
+
+// Version resolution, in priority order:
+//   1. an explicit `-Pversion=x.y.z` override (the release workflow passes it)
+//   2. the semver git tag pointing at HEAD (vX.Y.Z -> X.Y.Z) for tag builds
+//   3. a SNAPSHOT fallback for local/dev builds
+val semverTag = Regex("v(\\d+\\.\\d+\\.\\d+)")
+
+fun versionFromTag(): String? =
+    runCatching {
+        providers
+            .exec {
+                commandLine("git", "tag", "--points-at", "HEAD")
+            }.standardOutput.asText
+            .get()
+            .lineSequence()
+            .map { it.trim() }
+            .firstNotNullOfOrNull { semverTag.matchEntire(it)?.groupValues?.get(1) }
+    }.getOrNull()
+
+version =
+    (findProperty("version") as String?)
+        ?.takeIf { it != "unspecified" && it.isNotBlank() }
+        ?: versionFromTag()
+        ?: "0.0.0-SNAPSHOT"
+
+// Expose the resolved version to the app at runtime (ChessApp --version) by
+// expanding the src/main/resources/version.properties template at build time.
+tasks.processResources {
+    filesMatching("version.properties") {
+        expand(mapOf("version" to version))
+    }
+}
 
 java {
     toolchain {
@@ -27,9 +58,12 @@ dependencies {
     // native-image metadata) is what JLine itself recommends for native image;
     // jline-terminal-jna remains as a fallback. JLine picks providers in the
     // order ffm, jni, jna, exec (see TerminalBuilder.getProviders()).
-    implementation("org.jline:jline-terminal-jni:3.26.1")
-    implementation("org.jline:jline-native:3.26.1")
-    implementation("org.jline:jline-terminal-jna:3.26.1")
+    // 3.27.0+ is required on Windows: earlier jline-native builds stored the
+    // 64-bit INVALID_HANDLE_VALUE as a 32-bit int, so GetConsoleMode() always
+    // failed and every build fell back to a dumb terminal (jline3#1012).
+    implementation("org.jline:jline-terminal-jni:3.27.1")
+    implementation("org.jline:jline-native:3.27.1")
+    implementation("org.jline:jline-terminal-jna:3.27.1")
     implementation("net.java.dev.jna:jna:5.14.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
     testImplementation("org.assertj:assertj-core:3.26.3")

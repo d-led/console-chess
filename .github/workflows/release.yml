@@ -81,7 +81,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
 
       - name: Compile native image
-        run: ./gradlew nativeCompile
+        run: ./gradlew nativeCompile -Pversion=${GITHUB_REF_NAME#v}
 
       - name: Package archive and checksum
         run: |

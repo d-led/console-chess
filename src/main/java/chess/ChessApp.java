@@ -7,8 +7,16 @@ import chess.ai.StockfishEngine;
 import chess.engine.ChessEngine;
 import chess.tui.ChessModel;
 import com.williamcallahan.tui4j.compat.bubbletea.Program;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ChessApp {
 
@@ -60,11 +68,11 @@ public class ChessApp {
         case "--engine", "-e" -> engine = args[++i];
         case "--difficulty", "-d" -> difficulty = args[++i];
         case "--seed", "-s" -> seed = Long.parseLong(args[++i]);
-        case "--help", "-h" -> {
-          printUsage();
-          return null;
-        }
+        case "--debug" -> enableJLineDebugLogging();
         default -> {
+          if (isInfoFlag(args[i])) {
+            return null;
+          }
           System.err.println("Unknown: " + args[i]);
           printUsage();
           return null;
@@ -72,6 +80,50 @@ public class ChessApp {
       }
     }
     return new Options(engine, difficulty, seed);
+  }
+
+  private static boolean isInfoFlag(String arg) {
+    switch (arg) {
+      case "--version", "-V" -> printVersion();
+      case "--help", "-h" -> printUsage();
+      default -> {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static void printVersion() {
+    System.out.println("console-chess " + version());
+  }
+
+  /**
+   * Surfaces JLine's terminal diagnostics (why a provider failed, the fallback to a dumb terminal,
+   * etc.) on stderr. JLine logs these at FINE, which is off by default and initialized at image
+   * build time, so enable it here.
+   */
+  private static void enableJLineDebugLogging() {
+    Logger jline = Logger.getLogger("org.jline");
+    jline.setLevel(Level.ALL);
+    if (jline.getHandlers().length == 0) {
+      ConsoleHandler handler = new ConsoleHandler();
+      handler.setLevel(Level.ALL);
+      jline.addHandler(handler);
+    }
+    jline.setUseParentHandlers(false);
+  }
+
+  private static String version() {
+    Properties props = new Properties();
+    try (InputStream in = ChessApp.class.getResourceAsStream("/version.properties")) {
+      if (in == null) {
+        return "unknown";
+      }
+      props.load(new InputStreamReader(in, StandardCharsets.UTF_8));
+      return props.getProperty("version", "unknown");
+    } catch (IOException e) {
+      return "unknown";
+    }
   }
 
   private static void printUsage() {
@@ -84,5 +136,7 @@ public class ChessApp {
     System.out.println("  greedy    ELO ~500, captures everything, ignores -d");
     System.out.println("  stockfish ELO 1350-2800, Stockfish via UCI subprocess, responds to -d");
     System.out.println("Difficulty (noise and stockfish engines): easy | medium* | hard");
+    System.out.println("  --version, -V   print the version and exit");
+    System.out.println("  --debug         log JLine terminal diagnostics to stderr");
   }
 }

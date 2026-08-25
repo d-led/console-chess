@@ -15,6 +15,9 @@
       },
       {
         "pattern": "com/ibm/icu/ICUConfig.properties"
+      },
+      {
+        "pattern": "version.properties"
       }
     ]
   }
