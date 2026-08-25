@@ -33,6 +33,21 @@ Pre-built native binaries from the latest `main` build:
 
 Unzip, make executable (`chmod +x console-chess`), then run `./console-chess`.
 
+## Windows
+
+On Windows, run the native binary from **Windows Terminal** (the Windows 11
+default) or a VT-enabled console:
+
+```powershell
+.\console-chess.exe
+```
+
+The binary bundles JLine's JNI terminal provider, so it needs no extra install.
+The board is drawn through the Unicode console API, so chess glyphs render
+regardless of the console code page — no `chcp` change required. If you run it
+in a legacy conhost window and the pieces show as garbage, switch the console
+font to a Unicode one (e.g. Cascadia Mono) or use Windows Terminal.
+
 ## Controls
 
 | Key             | Action                     |

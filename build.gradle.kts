@@ -21,10 +21,14 @@ repositories {
 }
 
 dependencies {
-    implementation("com.williamcallahan:tui4j:0.3.3") {
-        exclude(group = "org.jline", module = "jline-terminal-jni")
-        exclude(group = "org.jline", module = "jline-native")
-    }
+    implementation("com.williamcallahan:tui4j:0.3.3")
+    // JLine native terminal providers. jline-terminal-jni (backed by
+    // jline-native, which bundles per-platform native libraries and GraalVM
+    // native-image metadata) is what JLine itself recommends for native image;
+    // jline-terminal-jna remains as a fallback. JLine picks providers in the
+    // order ffm, jni, jna, exec (see TerminalBuilder.getProviders()).
+    implementation("org.jline:jline-terminal-jni:3.26.1")
+    implementation("org.jline:jline-native:3.26.1")
     implementation("org.jline:jline-terminal-jna:3.26.1")
     implementation("net.java.dev.jna:jna:5.14.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
@@ -73,6 +77,10 @@ graalvmNative {
             verbose.set(true)
 
             buildArgs.addAll(
+                // JDK 24+ restricts System::load/loadLibrary. JLine's JNI provider
+                // (JLineNativeLoader) and JNA both call these, so native access must
+                // be enabled explicitly or the terminal providers cannot load.
+                "--enable-native-access=ALL-UNNAMED",
                 // JLine native (Windows JNI stubs) — defer to runtime where JLine handles failure
                 "--initialize-at-run-time=org.jline.nativ",
                 // JLine utils safe for build-time init
@@ -81,6 +89,7 @@ graalvmNative {
                 "--initialize-at-run-time=com.sun.jna",
                 // JLine terminal providers need runtime init
                 "--initialize-at-run-time=org.jline.terminal.impl.jna",
+                "--initialize-at-run-time=org.jline.terminal.impl.jni",
                 "--initialize-at-run-time=org.jline.terminal.impl.exec",
                 // ICU4J (via tui4j) loads BreakIteratorFactory reflectively and
                 // reads its compiled break-rule data from resources at runtime.
