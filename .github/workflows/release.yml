@@ -89,9 +89,11 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
 
       - name: Compile native image
+        shell: bash
         run: ./gradlew nativeCompile -Pversion=${GITHUB_REF_NAME#v}
 
       - name: Package archive and checksum
+        shell: bash
         run: |
           set -euo pipefail
           version="${GITHUB_REF_NAME#v}"
@@ -112,6 +114,7 @@ jobs:
           sha256sum "${archive}" | awk '{print $1}' > dist/checksum.txt
 
       - name: Upload archive to release
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
