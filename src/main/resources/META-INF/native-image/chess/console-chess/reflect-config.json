@@ -32,6 +32,23 @@
   },
   {
     "name": "com.ibm.icu.text.BreakIteratorFactory",
-    "allDeclaredConstructors": true
+    "methods": [
+      { "name": "<init>", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "java.lang.Enum",
+    "methods": [
+      { "name": "name", "parameterTypes": [] }
+    ]
+  },
+  {
+    "name": "java.util.Locale",
+    "methods": [
+      { "name": "getDefault", "parameterTypes": ["java.util.Locale$Category"] }
+    ]
+  },
+  {
+    "name": "java.util.Locale$Category"
   }
 ]
