@@ -1,6 +1,6 @@
 # Console Chess
 
-TUI chess in Java — play against an ELO ~1000 AI in your terminal.
+TUI chess in Java — play against your choice of AI engines in your terminal.
 
 ![console chess](./docs/img/console-chess.png) ![outline wins](./docs/img/outline-wins.png)
 
@@ -20,6 +20,14 @@ Install the native binary via Homebrew:
 brew tap d-led/homebrew-d-led
 brew install console-chess
 ```
+
+On Windows, install via Chocolatey:
+
+```powershell
+choco install console-chess
+```
+
+See the package at [Chocolatey](https://community.chocolatey.org/packages/console-chess).
 
 ## Downloads
 

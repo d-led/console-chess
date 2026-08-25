@@ -53,15 +53,23 @@ jobs:
           - os: macos-latest
             os-name: macos
             arch: arm64
+            binary: build/native/nativeCompile/console-chess
           - os: macos-15-intel
             os-name: macos
             arch: x64
+            binary: build/native/nativeCompile/console-chess
           - os: ubuntu-latest
             os-name: linux
             arch: x64
+            binary: build/native/nativeCompile/console-chess
           - os: ubuntu-24.04-arm
             os-name: linux
             arch: arm64
+            binary: build/native/nativeCompile/console-chess
+          - os: windows-latest
+            os-name: windows
+            arch: x64
+            binary: build/native/nativeCompile/console-chess.exe
     steps:
       - uses: actions/checkout@v7
 
@@ -91,10 +99,16 @@ jobs:
           arch="${{ matrix.arch }}"
           dir="dist/pkg/console-chess-${version}-${os}-${arch}"
           mkdir -p "${dir}"
-          cp build/native/nativeCompile/console-chess "${dir}/console-chess"
+          cp "${{ matrix.binary }}" "${dir}/console-chess"
           chmod +x "${dir}/console-chess"
-          archive="dist/console-chess-${version}-${os}-${arch}.tar.gz"
-          tar -czf "${archive}" -C dist/pkg "console-chess-${version}-${os}-${arch}"
+          if [[ "$os" == "windows" ]]; then
+            # zip with the exe at the root so chocolatey extracts it directly
+            archive="dist/console-chess-${version}-${os}-${arch}.zip"
+            (cd "${dir}" && tar -acf "../$(basename "${archive}")" console-chess)
+          else
+            archive="dist/console-chess-${version}-${os}-${arch}.tar.gz"
+            tar -czf "${archive}" -C dist/pkg "console-chess-${version}-${os}-${arch}"
+          fi
           sha256sum "${archive}" | awk '{print $1}' > dist/checksum.txt
 
       - name: Upload archive to release
@@ -103,7 +117,10 @@ jobs:
         run: |
           set -euo pipefail
           version="${GITHUB_REF_NAME#v}"
-          gh release upload "${GITHUB_REF_NAME}" "dist/console-chess-${version}-${{ matrix.os-name }}-${{ matrix.arch }}.tar.gz" --clobber
+          os="${{ matrix.os-name }}"
+          arch="${{ matrix.arch }}"
+          if [[ "$os" == "windows" ]]; then ext=".zip"; else ext=".tar.gz"; fi
+          gh release upload "${GITHUB_REF_NAME}" "dist/console-chess-${version}-${os}-${arch}${ext}" --clobber
 
       - name: Upload checksum
         uses: actions/upload-artifact@v7
@@ -157,3 +174,32 @@ jobs:
             git -C dist/tap commit -m "console-chess ${version}"
             git -C dist/tap push
           fi
+
+  publish-choco:
+    name: Publish Chocolatey package
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download Windows checksum
+        uses: actions/download-artifact@v8
+        with:
+          name: checksum-windows-x64
+          path: dist/checksums
+
+      - name: Create and push Chocolatey package
+        env:
+          CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          sha256="$(cat dist/checksums/checksum.txt)"
+          url="https://github.com/d-led/console-chess/releases/download/${GITHUB_REF_NAME}/console-chess-${version}-windows-x64.zip"
+
+          VERSION="${version}" URL="${url}" SHA256="${sha256}" \
+            bash scripts/generate-chocolatey-package.sh
+
+          choco push "dist/choco/console-chess.${version}.nupkg" \
+            --source https://push.chocolatey.org/ --api-key "${CHOCOLATEY_API_KEY}"

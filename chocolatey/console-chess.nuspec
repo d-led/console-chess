@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>console-chess</id>
+    <version>__VERSION__</version>
+    <title>Console Chess</title>
+    <authors>Dmitry Ledentsov</authors>
+    <owners>Dmitry Ledentsov</owners>
+    <projectUrl>https://github.com/d-led/console-chess</projectUrl>
+    <projectSourceUrl>https://github.com/d-led/console-chess</projectSourceUrl>
+    <docsUrl>https://github.com/d-led/console-chess</docsUrl>
+    <bugTrackerUrl>https://github.com/d-led/console-chess/issues</bugTrackerUrl>
+    <licenseUrl>https://github.com/d-led/console-chess/blob/main/LICENSE</licenseUrl>
+    <tags>chess tui terminal game</tags>
+    <summary>TUI chess in Java</summary>
+    <description>TUI chess in Java - play against your choice of AI engines in your terminal.</description>
+    <releaseNotes>__RELEASE_URL__</releaseNotes>
+  </metadata>
+</package>

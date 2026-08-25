@@ -44,6 +44,9 @@
 # *.iml
 # *.ipr
 
+# Release packaging output (Homebrew formula, Chocolatey package)
+dist/
+
 # CMake
 cmake-build-*/
 
