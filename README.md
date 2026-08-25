@@ -90,7 +90,9 @@ console-chess -e noise -d medium -s 42  # reproducible with seed
 ```
 
 The `stockfish` engine runs the [Stockfish](https://stockfishchess.org/) chess engine as a
-subprocess over the UCI protocol. Install it first (e.g. `brew install stockfish`); it does not
+subprocess over the UCI protocol. `brew install console-chess` and `choco install console-chess`
+install Stockfish automatically (on Homebrew, add `--without-stockfish` to skip it); when running
+the raw binary you can install it separately with `brew install stockfish`. Stockfish does not
 need to be present for the other engines.
 
 | Engine            | ELO      | Description                                       |

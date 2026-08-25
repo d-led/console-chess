@@ -34,6 +34,7 @@ class ConsoleChess < Formula
   homepage "https://github.com/d-led/console-chess"
   version "${version}"
   license "MPL-2.0"
+  depends_on "stockfish" => :recommended
 
   on_macos do
     if Hardware::CPU.arm?

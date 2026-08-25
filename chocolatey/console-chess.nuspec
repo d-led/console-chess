@@ -15,5 +15,8 @@
     <summary>TUI chess in Java</summary>
     <description>TUI chess in Java - play against your choice of AI engines in your terminal.</description>
     <releaseNotes>__RELEASE_URL__</releaseNotes>
+    <dependencies>
+      <dependency id="stockfish" />
+    </dependencies>
   </metadata>
 </package>
