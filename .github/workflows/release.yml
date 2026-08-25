@@ -100,13 +100,16 @@ jobs:
           os="${{ matrix.os-name }}"
           arch="${{ matrix.arch }}"
           dir="dist/pkg/console-chess-${version}-${os}-${arch}"
+          binary_name="console-chess"
+          if [[ "$os" == "windows" ]]; then binary_name="console-chess.exe"; fi
           mkdir -p "${dir}"
-          cp "${{ matrix.binary }}" "${dir}/console-chess"
-          chmod +x "${dir}/console-chess"
+          cp "${{ matrix.binary }}" "${dir}/${binary_name}"
+          chmod +x "${dir}/${binary_name}"
           if [[ "$os" == "windows" ]]; then
             # zip with the exe at the root so chocolatey extracts it directly
             archive="dist/console-chess-${version}-${os}-${arch}.zip"
-            (cd "${dir}" && tar -acf "../$(basename "${archive}")" console-chess)
+            python3 -c "import shutil,sys; shutil.make_archive(sys.argv[1], 'zip', root_dir=sys.argv[2])" \
+              "dist/console-chess-${version}-${os}-${arch}" "${dir}"
           else
             archive="dist/console-chess-${version}-${os}-${arch}.tar.gz"
             tar -czf "${archive}" -C dist/pkg "console-chess-${version}-${os}-${arch}"
