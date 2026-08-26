@@ -88,6 +88,14 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v6
 
+      - name: Compile icon resource (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        working-directory: docs/img
+        run: |
+          $rc = (Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\rc.exe" -ErrorAction Stop | Sort-Object FullName -Descending | Select-Object -First 1).FullName
+          & $rc /nologo /fo console-chess.res console-chess.rc
+
       - name: Compile native image
         shell: bash
         run: ./gradlew nativeCompile -Pversion=${GITHUB_REF_NAME#v}

@@ -47,6 +47,9 @@
 # Release packaging output (Homebrew formula, Chocolatey package)
 dist/
 
+# Generated Windows icon resource (rc.exe output, compiled by CI)
+docs/img/console-chess.res
+
 # CMake
 cmake-build-*/
 

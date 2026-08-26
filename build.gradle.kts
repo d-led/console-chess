@@ -135,6 +135,14 @@ graalvmNative {
                 // Include all charsets
                 "-H:+AddAllCharsets",
             )
+
+            // Embed the Windows icon resource into the executable. CI compiles
+            // docs/img/console-chess.rc to console-chess.res before invoking
+            // nativeCompile; skipped when the file is absent (local builds).
+            val iconRes = layout.projectDirectory.file("docs/img/console-chess.res").asFile
+            if (iconRes.exists()) {
+                buildArgs.add("-H:NativeLinkerOption=${iconRes.absolutePath}")
+            }
         }
     }
 }

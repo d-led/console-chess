@@ -1,0 +1,3 @@
+// Application icon embedded into the Windows executable.
+// Compile with: rc /nologo /fo console-chess.res console-chess.rc
+IDI_ICON_1 ICON "console-chess-icon.ico"
