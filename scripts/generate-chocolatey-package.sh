@@ -33,5 +33,6 @@ sed "s|__URL__|${url}|g; s|__SHA256__|${sha256}|g" \
   chocolatey/tools/chocolateyinstall.ps1 > "${outdir}/tools/chocolateyinstall.ps1"
 
 cp chocolatey/tools/chocolateyuninstall.ps1 "${outdir}/tools/chocolateyuninstall.ps1"
+cp chocolatey/LICENSE.txt "${outdir}/LICENSE.txt"
 
 choco pack "${outdir}/console-chess.nuspec" --outputdirectory "${outdir}"

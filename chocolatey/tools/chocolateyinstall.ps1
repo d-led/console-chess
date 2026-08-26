@@ -6,3 +6,6 @@ $url      = '__URL__'
 $checksum = '__SHA256__'
 
 Install-ChocolateyZipPackage -PackageName 'console-chess' -Url "$url" -UnzipLocation "$toolsDir" -Checksum "$checksum" -ChecksumType 'sha256'
+
+# Smoke test: fail fast if the downloaded binary does not run.
+& "$toolsDir\console-chess.exe" --version

@@ -6,16 +6,23 @@
     <title>Console Chess</title>
     <authors>Dmitry Ledentsov</authors>
     <owners>Dmitry Ledentsov</owners>
+    <copyright>Copyright © 2026 Dmitry Ledentsov</copyright>
     <projectUrl>https://github.com/d-led/console-chess</projectUrl>
     <projectSourceUrl>https://github.com/d-led/console-chess</projectSourceUrl>
     <packageSourceUrl>https://github.com/d-led/console-chess/tree/main/chocolatey</packageSourceUrl>
     <iconUrl>https://raw.githubusercontent.com/d-led/console-chess/main/docs/img/console-chess-icon.png</iconUrl>
-    <docsUrl>https://github.com/d-led/console-chess</docsUrl>
+    <docsUrl>https://github.com/d-led/console-chess#readme</docsUrl>
     <bugTrackerUrl>https://github.com/d-led/console-chess/issues</bugTrackerUrl>
     <licenseUrl>https://github.com/d-led/console-chess/blob/main/LICENSE</licenseUrl>
-    <tags>chess tui terminal game</tags>
+    <tags>chess tui console game chess-engines unicode</tags>
     <summary>TUI chess in Java</summary>
-    <description>TUI chess in Java - play against your choice of AI engines in your terminal.</description>
+    <description>Play chess in your terminal against a choice of AI engines.
+
+Console Chess draws the board with Unicode chess glyphs, so it renders in any modern terminal (Windows Terminal, VT-enabled consoles, macOS and Linux). Move the cursor with the arrow keys or hjkl, select and confirm moves with Enter/Space, and quit with q.
+
+Four engines ship behind one interface: noise (default, ELO ~750-1250), greedy (ELO ~500), adam (minimax with piece-square tables, ELO ~1600) and stockfish (Stockfish over UCI, Elo-capped 1350-2800, installed automatically as a dependency).
+
+Run console-chess -e engine -d easy|medium|hard to pick an engine and difficulty.</description>
     <releaseNotes>__RELEASE_URL__</releaseNotes>
     <dependencies>
       <dependency id="stockfish" />
