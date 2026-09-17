@@ -189,11 +189,24 @@ jobs:
             git -C dist/tap push
           fi
 
+  # A job-level `if` cannot read secrets, so the key is published as an output here.
+  # Naming it in the condition instead makes GitHub reject the whole workflow file.
+  choco_key:
+    name: Check for the Chocolatey API key
+    runs-on: ubuntu-latest
+    outputs:
+      configured: ${{ steps.check.outputs.configured }}
+    steps:
+      - id: check
+        env:
+          CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
+        run: echo "configured=${{ env.CHOCOLATEY_API_KEY != '' }}" >> "$GITHUB_OUTPUT"
+
   publish-choco:
     name: Publish Chocolatey package
-    needs: build
+    needs: [build, choco_key]
     runs-on: windows-latest
-    if: secrets.CHOCOLATEY_API_KEY != ''
+    if: needs.choco_key.outputs.configured == 'true'
     steps:
       - uses: actions/checkout@v7
 
