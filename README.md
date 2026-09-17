@@ -82,7 +82,8 @@ tag on the current commit, then `0.0.0-SNAPSHOT`.
 Four engines behind a common `ChessEngine` interface. Select with `-e`:
 
 ```bash
-./scripts/chess.sh play       # default: noise, medium
+./scripts/chess.sh play               # default: noise, medium
+./scripts/chess.sh play -e stockfish -d hard   # further args go to the app
 console-chess -e noise -d easy        # ELO ~750
 console-chess -e noise -d hard        # ELO ~1250
 console-chess -e adam                 # ELO ~1600, minimax + piece-square tables
@@ -110,7 +111,7 @@ need to be present for the other engines.
 All commands live in `./scripts/chess.sh`:
 
 ```bash
-./scripts/chess.sh play       # build if needed, then run (JVM)
+./scripts/chess.sh play       # build if needed, then run (JVM); args go to the app
 ./scripts/chess.sh build      # build JVM distribution only
 ./scripts/chess.sh test       # run all tests
 ./scripts/chess.sh native     # build native binary (GraalVM)
