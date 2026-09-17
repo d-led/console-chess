@@ -14,7 +14,7 @@ usage() {
     echo "  build     Build JVM distribution"
     echo "  test      Run all tests"
     echo "  format    Auto-format Java code + markdown"
-    echo "  upgrade   Show available dependency upgrades"
+    echo "  upgrade   Show/apply dependency upgrades (scripts/update-dependencies.sh)"
     echo "  native    Build native image (GraalVM)"
     echo "  nrun      Build native if needed, then run"
     echo "  ci        Test + native build"
@@ -46,8 +46,7 @@ cmd_format() {
 }
 
 cmd_upgrade() {
-    echo "=== Checking for dependency upgrades ==="
-    ./gradlew dependencyUpdates
+    exec "$(dirname "$0")/update-dependencies.sh" "$@"
 }
 
 cmd_native() {
@@ -77,7 +76,7 @@ case "${1:-}" in
     build)   cmd_build ;;
     test)    cmd_test ;;
     format)  cmd_format ;;
-    upgrade) cmd_upgrade ;;
+    upgrade) shift; cmd_upgrade "$@" ;;
     native)  cmd_native ;;
     nrun)    cmd_nrun ;;
     ci)      cmd_ci ;;
