@@ -18,6 +18,9 @@ usage() {
     echo "  native    Build native image (GraalVM)"
     echo "  nrun      Build native if needed, then run"
     echo "  ci        Test + native build"
+    echo ""
+    echo "play and nrun pass further arguments to the app, e.g."
+    echo "  $0 play -e stockfish -d hard"
     exit 1
 }
 
@@ -30,7 +33,7 @@ cmd_play() {
     echo "=== Building ==="
     ./gradlew installDist
     echo "=== Launching console-chess ==="
-    exec "$JVM_BIN"
+    exec "$JVM_BIN" "$@"
 }
 
 cmd_test() {
@@ -62,7 +65,7 @@ cmd_nrun() {
         cmd_native
     fi
     echo "=== Launching native console-chess ==="
-    exec "$NATIVE_BIN"
+    exec "$NATIVE_BIN" "$@"
 }
 
 cmd_ci() {
@@ -72,13 +75,13 @@ cmd_ci() {
 }
 
 case "${1:-}" in
-    play)    cmd_play ;;
+    play)    shift; cmd_play "$@" ;;
     build)   cmd_build ;;
     test)    cmd_test ;;
     format)  cmd_format ;;
     upgrade) shift; cmd_upgrade "$@" ;;
     native)  cmd_native ;;
-    nrun)    cmd_nrun ;;
+    nrun)    shift; cmd_nrun "$@" ;;
     ci)      cmd_ci ;;
     *)       usage ;;
 esac
