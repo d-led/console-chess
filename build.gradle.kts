@@ -64,6 +64,7 @@ dependencies {
     // close() needs the same monitor (PumpThread.shutdown), so the process never
     // exits. 3.30.17 is the newest 3.x release of every module, jline-terminal-jna
     // included (JLine 4 dropped it). Revisit when tui4j supports JLine 4.
+    // ** DO NOT UPDATE TO jline v4 **
     implementation("org.jline:jline-terminal-jni:3.30.17")
     implementation("org.jline:jline-native:3.30.17")
     implementation("org.jline:jline-terminal-jna:3.30.17")
