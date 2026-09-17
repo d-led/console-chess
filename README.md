@@ -64,6 +64,9 @@ font to a Unicode one (e.g. Cascadia Mono) or use Windows Terminal.
 | Enter / Space   | Select piece, confirm move |
 | `q`             | Quit                       |
 
+While the engine is searching, the status line shows `⌛ thinking ⌛`; the board keeps drawing
+meanwhile, and moves are ignored until it answers.
+
 ## Version
 
 ```bash
