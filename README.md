@@ -135,6 +135,12 @@ Major updates (JUnit 5 -> 6, JLine 3 -> 4) usually need code changes: `--apply` 
 and the test run tells you whether they worked. Nothing is committed, so review the diff of
 `build.gradle.kts` afterwards.
 
+Dependabot covers the same ground on GitHub, weekly and without anyone asking: one PR for Gradle
+dependencies and build plugins (patch and minor grouped, majors on their own) and one for the
+actions the workflows use — see `.github/dependabot.yml`. JLine major updates are ignored there on
+purpose, for the reason recorded in `build.gradle.kts`. The script above is the local alternative,
+and it additionally reports the Gradle wrapper version.
+
 ### Terminal Smoke Test
 
 `./scripts/tui-smoke-test.py <binary>` runs the TUI in a real terminal (a pty on Unix, a ConPTY on

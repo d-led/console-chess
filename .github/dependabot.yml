@@ -1,0 +1,33 @@
+version: 2
+
+updates:
+  # Java dependencies and build plugins declared in build.gradle.kts.
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      # Patch and minor bumps arrive as one PR; a major one gets its own, since a
+      # major usually needs code changes (see scripts/update-dependencies.sh --major).
+      gradle-minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      # JLine 4 deadlocks this app on quit with the tui4j version in use; the pin
+      # and its thread dump are documented in build.gradle.kts.
+      - dependency-name: "org.jline:*"
+        update-types: ["version-update:semver-major"]
+
+  # Actions used by .github/workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci(actions)"
+    groups:
+      actions:
+        patterns: ["*"]
