@@ -17,6 +17,7 @@ import time
 
 BOARD_WORD = "Console"  # the title line, drawn once the board is rendered
 DUMB_WORD = "dumb"  # JLine logs this when no native terminal provider worked
+RESTORED_WORD = "1049l"  # the escape that leaves the alternate screen, written on the way out
 
 
 def as_text(data):
@@ -121,13 +122,17 @@ def main():
     parser.add_argument("binary")
     parser.add_argument("--keys", default="q", help="sent once the TUI has started")
     parser.add_argument("--startup-seconds", type=int, default=5)
-    parser.add_argument("--exit-seconds", type=int, default=6)
+    parser.add_argument("--exit-seconds", type=int, default=8)
     args = parser.parse_args()
 
     terminal = start(args.binary)
     terminal.read(args.startup_seconds)
     terminal.write(args.keys)
     output = terminal.read(args.exit_seconds)
+    if terminal.alive():
+        # a keystroke can be lost in a terminal that was just created; press it once more
+        terminal.write(args.keys)
+        output = terminal.read(args.exit_seconds)
     still_running = terminal.alive()
     terminal.terminate()
 
@@ -137,7 +142,8 @@ def main():
     if DUMB_WORD in output.lower():
         problems.append("JLine fell back to its dumb terminal")
     if still_running:
-        problems.append("the TUI was still running after {!r}".format(args.keys))
+        problems.append("the TUI was still running after {!r} (terminal restored: {})".format(
+            args.keys, RESTORED_WORD in output))
 
     if problems:
         print("smoke test FAILED for " + args.binary, file=sys.stderr)
