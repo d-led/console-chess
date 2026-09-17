@@ -192,3 +192,7 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
 
 *.received.txt
+
+# Python bytecode (scripts/tui-smoke-test.py)
+__pycache__/
+*.pyc

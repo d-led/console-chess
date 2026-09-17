@@ -2,9 +2,12 @@ plugins {
     java
     application
     pmd
-    id("com.github.ben-manes.versions") version "0.51.0"
-    id("com.diffplug.spotless") version "7.0.2"
-    id("org.graalvm.buildtools.native") version "0.10.3"
+    // Reports available dependency, plugin and Gradle updates; driven by
+    // scripts/update-dependencies.sh. 0.55.0+ (the io.github.ben-manes namespace) is
+    // required on Gradle 9, which removed the LenientConfiguration API used before it.
+    id("io.github.ben-manes.versions") version "0.64.0"
+    id("com.diffplug.spotless") version "8.10.2"
+    id("org.graalvm.buildtools.native") version "1.1.13"
 }
 
 group = "chess"
@@ -53,21 +56,24 @@ repositories {
 
 dependencies {
     implementation("com.williamcallahan:tui4j:0.3.3")
-    // JLine native terminal providers. jline-terminal-jni (backed by
-    // jline-native, which bundles per-platform native libraries and GraalVM
-    // native-image metadata) is what JLine itself recommends for native image;
-    // jline-terminal-jna remains as a fallback. JLine picks providers in the
-    // order ffm, jni, jna, exec (see TerminalBuilder.getProviders()).
-    // 3.27.0+ is required on Windows: earlier jline-native builds stored the
-    // 64-bit INVALID_HANDLE_VALUE as a 32-bit int, so GetConsoleMode() always
-    // failed and every build fell back to a dumb terminal (jline3#1012).
-    implementation("org.jline:jline-terminal-jni:3.27.1")
-    implementation("org.jline:jline-native:3.27.1")
-    implementation("org.jline:jline-terminal-jna:3.27.1")
-    implementation("net.java.dev.jna:jna:5.14.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
-    testImplementation("org.assertj:assertj-core:3.26.3")
-    testImplementation("com.approvaltests:approvaltests:24.5.0")
+    // JLine native terminal providers: jni, backed by jline-native (per-platform
+    // native libraries plus GraalVM native-image metadata), with jna as a fallback.
+    // Held at the 3.x line even though 4.x is out: on 4.4.5 the app hangs after the
+    // user quits. tui4j's input thread sits inside JLine's synchronized
+    // NonBlockingInputStreamImpl.read() holding that monitor, and JLine 4's terminal
+    // close() needs the same monitor (PumpThread.shutdown), so the process never
+    // exits. 3.30.17 is the newest 3.x release of every module, jline-terminal-jna
+    // included (JLine 4 dropped it). Revisit when tui4j supports JLine 4.
+    implementation("org.jline:jline-terminal-jni:3.30.17")
+    implementation("org.jline:jline-native:3.30.17")
+    implementation("org.jline:jline-terminal-jna:3.30.17")
+    implementation("net.java.dev.jna:jna:5.19.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+    // JUnit 6 no longer brings the launcher that Gradle's JUnit Platform support
+    // needs on the test runtime classpath.
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.assertj:assertj-core:3.27.7")
+    testImplementation("com.approvaltests:approvaltests:31.0.0")
 }
 
 application {
