@@ -115,6 +115,33 @@ All commands live in `./scripts/chess.sh`:
 ./scripts/chess.sh ci         # test + native build
 ```
 
+### Dependency Updates
+
+`./scripts/update-dependencies.sh` lists dependencies and Gradle plugins with newer versions and can
+write them into `build.gradle.kts`:
+
+```bash
+./scripts/update-dependencies.sh             # list updates to the latest release versions
+./scripts/update-dependencies.sh --milestone # include milestone / pre-release versions
+./scripts/update-dependencies.sh --check     # exit 1 when updates are available (for CI)
+./scripts/update-dependencies.sh --apply     # write the updates, then run the tests
+```
+
+Major updates (JUnit 5 -> 6, JLine 3 -> 4) usually need code changes: `--apply` still writes them,
+and the test run tells you whether they worked. Nothing is committed, so review the diff of
+`build.gradle.kts` afterwards.
+
+### Terminal Smoke Test
+
+`./scripts/tui-smoke-test.py <binary>` runs the TUI in a real terminal (a pty on Unix, a ConPTY on
+Windows via `pywinpty`) and fails when the board does not render, when JLine falls back to its dumb
+terminal, or when the app does not quit on `q`. CI runs it against the native binary on Linux, macOS
+and Windows, which is the only place a terminal provider that cannot load on Windows shows up.
+
+```bash
+./gradlew installDist && python3 scripts/tui-smoke-test.py build/install/console-chess/bin/console-chess
+```
+
 ## Native Build
 
 Produces a dependency-free binary. Requires GraalVM — set `GRAALVM_HOME` or the script defaults to:

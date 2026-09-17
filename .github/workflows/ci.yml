@@ -8,7 +8,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
 
@@ -20,6 +24,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
 
       - name: Install Stockfish (for the engine integration test)
+        if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y stockfish
 
       - run: ./gradlew test
@@ -27,7 +32,7 @@ jobs:
       - uses: dorny/test-reporter@v3
         if: success() || failure()
         with:
-          name: JUnit Tests
+          name: JUnit Tests (${{ matrix.os }})
           path: build/test-results/test/TEST-*.xml
           reporter: java-junit
 
@@ -74,6 +79,18 @@ jobs:
           & $rc /nologo /fo console-chess.res console-chess.rc
 
       - run: ./gradlew nativeCompile
+
+      - name: Check the binary starts
+        run: ./${{ matrix.binary }} --version
+
+      # The binary is a terminal UI, so it needs a real pseudo console to be
+      # exercised: a pty on Unix, a ConPTY on Windows (via pywinpty).
+      - name: Install pywinpty (ConPTY for the smoke test)
+        if: matrix.os == 'windows-latest'
+        run: python -m pip install --disable-pip-version-check pywinpty
+
+      - name: Smoke-test the binary in a real terminal
+        run: python scripts/tui-smoke-test.py ./${{ matrix.binary }}
 
       - uses: actions/upload-artifact@v7
         with:
