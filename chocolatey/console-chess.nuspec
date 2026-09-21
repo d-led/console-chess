@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/d-led/console-chess</projectUrl>
     <projectSourceUrl>https://github.com/d-led/console-chess</projectSourceUrl>
     <packageSourceUrl>https://github.com/d-led/console-chess/tree/main/chocolatey</packageSourceUrl>
-    <iconUrl>https://raw.githubusercontent.com/d-led/console-chess/main/docs/img/console-chess-icon.png</iconUrl>
+    <iconUrl>__ICON_URL__</iconUrl>
     <docsUrl>https://github.com/d-led/console-chess#readme</docsUrl>
     <bugTrackerUrl>https://github.com/d-led/console-chess/issues</bugTrackerUrl>
     <licenseUrl>https://github.com/d-led/console-chess/blob/main/LICENSE</licenseUrl>

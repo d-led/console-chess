@@ -19,6 +19,9 @@ url="${URL:?URL is required}"
 sha256="${SHA256:?SHA256 is required}"
 outdir="${OUTDIR:-dist/choco}"
 release_url="https://github.com/d-led/console-chess/releases/tag/v${version}"
+# community.chocolatey.org rejects raw.githubusercontent.com icon URLs, so the icon is
+# served by jsDelivr pinned to the release tag (same file, immutable revision).
+icon_url="https://cdn.jsdelivr.net/gh/d-led/console-chess@v${version}/docs/img/console-chess-icon.png"
 
 mkdir -p "${outdir}/tools"
 
@@ -27,6 +30,7 @@ sed \
   -e "s|__URL__|${url}|g" \
   -e "s|__SHA256__|${sha256}|g" \
   -e "s|__RELEASE_URL__|${release_url}|g" \
+  -e "s|__ICON_URL__|${icon_url}|g" \
   chocolatey/console-chess.nuspec > "${outdir}/console-chess.nuspec"
 
 sed "s|__URL__|${url}|g; s|__SHA256__|${sha256}|g" \

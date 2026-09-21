@@ -1,0 +1,49 @@
+name: publish-choco
+
+# Republish the Chocolatey package of an already-released version, without cutting a
+# new release. Needed when community.chocolatey.org moderation asks for a packaging
+# change (e.g. a different iconUrl) and the same version has to be resubmitted: the
+# released archive, its URL and its checksum stay untouched, only the packaging
+# templates in chocolatey/ are re-applied from the current branch.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Released version to republish, without the v prefix (e.g. 1.1.2)
+        required: true
+
+jobs:
+  publish-choco:
+    name: Republish Chocolatey package
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download the released Windows archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ inputs.version }}"
+          url="https://github.com/d-led/console-chess/releases/download/v${version}/console-chess-${version}-windows-x64.zip"
+          mkdir -p dist
+          curl -fsSL -o dist/windows-x64.zip "${url}"
+          {
+            echo "url=${url}"
+            echo "sha256=$(sha256sum dist/windows-x64.zip | awk '{print $1}')"
+          } >> "$GITHUB_ENV"
+
+      - name: Create and push the Chocolatey package
+        env:
+          CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${CHOCOLATEY_API_KEY}" ]]; then
+            echo "::error::CHOCOLATEY_API_KEY is not configured for this repository"
+            exit 1
+          fi
+          version="${{ inputs.version }}"
+          VERSION="${version}" URL="${url}" SHA256="${sha256}" \
+            bash scripts/generate-chocolatey-package.sh
+          choco push "dist/choco/console-chess.${version}.nupkg" \
+            --source https://push.chocolatey.org/ --api-key "${CHOCOLATEY_API_KEY}"
