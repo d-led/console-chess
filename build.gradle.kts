@@ -5,9 +5,9 @@ plugins {
     // Reports available dependency, plugin and Gradle updates; driven by
     // scripts/update-dependencies.sh. 0.55.0+ (the io.github.ben-manes namespace) is
     // required on Gradle 9, which removed the LenientConfiguration API used before it.
-    id("io.github.ben-manes.versions") version "0.64.0"
-    id("com.diffplug.spotless") version "8.10.2"
-    id("org.graalvm.buildtools.native") version "1.1.13"
+    id("io.github.ben-manes.versions") version "0.65.0"
+    id("com.diffplug.spotless") version "8.10.3"
+    id("org.graalvm.buildtools.native") version "1.1.14"
 }
 
 group = "chess"
