@@ -5,9 +5,9 @@ plugins {
     // Reports available dependency, plugin and Gradle updates; driven by
     // scripts/update-dependencies.sh. 0.55.0+ (the io.github.ben-manes namespace) is
     // required on Gradle 9, which removed the LenientConfiguration API used before it.
-    id("io.github.ben-manes.versions") version "0.64.0"
-    id("com.diffplug.spotless") version "8.10.2"
-    id("org.graalvm.buildtools.native") version "1.1.13"
+    id("io.github.ben-manes.versions") version "0.66.0"
+    id("com.diffplug.spotless") version "8.10.4"
+    id("org.graalvm.buildtools.native") version "1.1.16"
 }
 
 group = "chess"
@@ -55,7 +55,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.williamcallahan:tui4j:0.3.3")
+    implementation("com.williamcallahan:tui4j:0.3.4")
     // JLine native terminal providers: jni, backed by jline-native (per-platform
     // native libraries plus GraalVM native-image metadata), with jna as a fallback.
     // Held at the 3.x line even though 4.x is out: on 4.4.5 the app hangs after the
